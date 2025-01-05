@@ -57,8 +57,11 @@ export default {
   },
   methods: {
     handleClick(link) {
-      this.$dsBridge.call('gotoPageThroughRoute', {
-        page: `${link}`,
+      // this.$dsBridge.call('gotoPageThroughRoute', {
+      //   page: `${link}`,
+      // })
+      uni.navigateTo({
+        url: 'pages/afterSaleInputLogistics/index',
       })
     },
   },

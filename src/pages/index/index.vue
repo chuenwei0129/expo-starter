@@ -125,6 +125,9 @@
         :style="{ height: `calc(100vh - ${navHeight})` }"
         @scroll="onScroll"
         @scrolltolower="handleScrollToLower"
+        refresher-enabled
+        :refresher-triggered="isTriggered"
+        @refresherrefresh="handleRefresherrefresh"
       >
         <!-- 金刚区，展示导航项 -->
         <NavigationArea v-if="navigationList.length" :list="navigationList" />
@@ -255,6 +258,7 @@ export default {
         countryCode: '',
       },
       isFromSelectPositionCityPage: false,
+      isTriggered: false,
     }
   },
 
@@ -317,8 +321,20 @@ export default {
   },
 
   methods: {
+    async handleRefresherrefresh() {
+      this.isTriggered = true
+      this.$refs.productFeedsRef.reset()
+      await Promise.all([
+        this.fetchNavigationData(),
+        this.fetchCouponListData(),
+        this.fetchComponentListData(),
+        this.fetchResourceData(),
+        // TODO: 获取商品列表数据
+        this.$refs.productFeedsRef.fetchProductListData(),
+      ])
+      this.isTriggered = false
+    },
     handleScrollToLower() {
-      console.log('🚀 ~ handleScrollToLower ~ handleScrollToLower')
       this.$refs.productFeedsRef.fetchProductListData()
     },
     // 返回上一页

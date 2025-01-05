@@ -102,7 +102,7 @@ export default {
       }
       const { cityCode, lon: lng, lat } = this.locationInfo
       this.isFetched = false
-      uni.$emit('skeleton-refresh', true) // 关闭骨架屏
+      uni.$emit('skeleton-refresh', true) // 开启骨架屏
       const resp = await fetchProductListAPI({
         pageNum: this.params.pageNum,
         pageSize: 10,
@@ -118,10 +118,6 @@ export default {
       })
       this.isFetched = true
       uni.$emit('skeleton-refresh', false) // 关闭骨架屏
-      // 如果是第一页，清空数组
-      // if (this.params.pageNum === 1) {
-      //   this.products = []
-      // }
       console.log('🚀 ~ fetchProductListData ~ resp:', resp)
       this.totalCount = Number(resp.data.data.totalCount)
       this.products = this.products.concat(resp.data.data.data || [])
@@ -137,19 +133,20 @@ export default {
       if (this.params.categoryId === tabIndex) {
         return
       }
-      this.isFinished = false
-      this.params.pageNum = 1
       this.params.categoryId = tabIndex
-      this.products = []
+      this.reset()
       this.fetchProductListData()
     },
     onFilterChange(filterType) {
       console.log('🚀 ~ onFilterChange ~ filterType:', filterType)
       this.params.sortType = filterType
+      this.reset()
+      this.fetchProductListData() // 重新获取数据
+    },
+    reset() {
       this.params.pageNum = 1 // 重置页码
       this.isFinished = false
       this.products = []
-      this.fetchProductListData() // 重新获取数据
     },
   },
 }

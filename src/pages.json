@@ -20,7 +20,8 @@
     {
       "path": "pages/cart/cart",
       "style": {
-        "navigationBarTitleText": "购物车"
+        "navigationBarTitleText": "购物车",
+        "navigationStyle": "custom"
       }
     },
     {
@@ -68,11 +69,5 @@
         "selectedIconPath": "static/tabs/user_selected.png"
       }
     ]
-  },
-  "subPackages": [
-    {
-      "root": "pages",
-      "pages": []
-    }
-  ]
+  }
 }

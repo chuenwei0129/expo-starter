@@ -1,97 +1,85 @@
 <template>
-  <view>
-    <NavBar
-      show-back-btn
-      :white-back="false"
-      customback
-      @navBackClickHandle="goToPreviousPage"
-    ></NavBar>
-    <view class="after-sale-input-logistics-content">
-      <text style="color: #333333; font-size: 27rpx"
-        >超过7天未提交则视为退款失败</text
+  <view class="after-sale-input-logistics-content">
+    <text style="color: #333333; font-size: 27rpx"
+      >超过7天未提交则视为退款失败</text
+    >
+    <view v-if="hasGift" style="margin-top: 18rpx; width: 100%">
+      <view
+        style="
+          background-color: #ffd41e;
+          width: 100%;
+          height: 88rpx;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        "
       >
-      <view v-if="hasGift" style="margin-top: 18rpx; width: 100%">
-        <view
-          style="
-            background-color: #ffd41e;
-            width: 100%;
-            height: 88rpx;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          "
+        <text style="font-size: 29rpx; color: #1f1f1f"
+          >注：请务必将赠品与主商品一起退回</text
         >
-          <text style="font-size: 29rpx; color: #1f1f1f"
-            >注：请务必将赠品与主商品一起退回</text
-          >
-        </view>
       </view>
-      <view
-        class="logistics-form"
-        :style="{ marginTop: hasGift ? '16rpx' : '43rpx' }"
-      >
-        <view class="form-item">
-          <view class="form-item-title">寄回物流公司</view>
-          <input
-            class="form-item-input"
-            placeholder="请输入快递公司名称，如申通快递"
-            placeholder-class="form-item-placeholder"
-            v-model="deliveryCompanyName"
-          />
-        </view>
-        <view style="height: 2rpx; background-color: #f8f8f8; width: 100%" />
-        <view class="form-item">
-          <view class="form-item-title">寄回物流单号</view>
-          <input
-            class="form-item-input"
-            placeholder="请填写快递单号"
-            placeholder-class="form-item-placeholder"
-            v-model="logisticsNo"
-          />
-        </view>
-      </view>
-      <view class="logistics-address">
-        <text class="address-item">
-          退货地址：{{ refundAddress.address }}
-          <text class="address-copy" @click="handleCopy(refundAddress.address)"
-            >复制</text
-          >
-        </text>
-        <text class="address-item">
-          电话：{{ refundAddress.phone }}
-          <text class="address-copy" @click="handleCopy(refundAddress.phone)"
-            >复制</text
-          >
-        </text>
-        <text class="address-item">
-          收件人：{{ refundAddress.name }}
-          <text class="address-copy" @click="handleCopy(refundAddress.name)"
-            >复制</text
-          >
-        </text>
-      </view>
-      <view
-        class="logistics-commit"
-        :style="{
-          backgroundColor: canCommit ? '#FE2442' : '#EEEEEE',
-          color: canCommit ? '#FFF' : '#999',
-        }"
-        @tap="$u.debounce(handleCommit, 500)"
-        >提交</view
-      >
     </view>
+    <view
+      class="logistics-form"
+      :style="{ marginTop: hasGift ? '16rpx' : '43rpx' }"
+    >
+      <view class="form-item">
+        <view class="form-item-title">寄回物流公司</view>
+        <input
+          class="form-item-input"
+          placeholder="请输入快递公司名称，如申通快递"
+          placeholder-class="form-item-placeholder"
+          v-model="deliveryCompanyName"
+        />
+      </view>
+      <view style="height: 2rpx; background-color: #f8f8f8; width: 100%" />
+      <view class="form-item">
+        <view class="form-item-title">寄回物流单号</view>
+        <input
+          class="form-item-input"
+          placeholder="请填写快递单号"
+          placeholder-class="form-item-placeholder"
+          v-model="logisticsNo"
+        />
+      </view>
+    </view>
+    <view class="logistics-address">
+      <text class="address-item">
+        退货地址：{{ refundAddress.address }}
+        <text class="address-copy" @click="handleCopy(refundAddress.address)"
+          >复制</text
+        >
+      </text>
+      <text class="address-item">
+        电话：{{ refundAddress.phone }}
+        <text class="address-copy" @click="handleCopy(refundAddress.phone)"
+          >复制</text
+        >
+      </text>
+      <text class="address-item">
+        收件人：{{ refundAddress.name }}
+        <text class="address-copy" @click="handleCopy(refundAddress.name)"
+          >复制</text
+        >
+      </text>
+    </view>
+    <view
+      class="logistics-commit"
+      :style="{
+        backgroundColor: canCommit ? '#FE2442' : '#EEEEEE',
+        color: canCommit ? '#FFF' : '#999',
+      }"
+      @tap="$u.debounce(handleCommit, 500)"
+      >提交</view
+    >
   </view>
 </template>
 
 <script>
 // import { CREATE_AFTER_SALE_SEND_BACK } from '@/api/mall'
 // import { GET_SEND_BACK_ADDRESS } from '@/api/mallv2'
-import NavBar from '../../components/navBar/index.vue'
 
 export default {
-  components: {
-    NavBar,
-  },
   data() {
     return {
       refundAddress: {},
@@ -112,11 +100,6 @@ export default {
     },
   },
   methods: {
-    goToPreviousPage() {
-      uni.navigateBack({
-        delta: 1,
-      })
-    },
     async queryData() {
       const res = await GET_SEND_BACK_ADDRESS({
         storeId: this.sellerId,
@@ -190,7 +173,6 @@ export default {
 <style lang="scss">
 .after-sale-input-logistics-content {
   height: 100vh;
-  padding-top: 40rpx;
   background-color: #f7f8fc;
   display: flex;
   flex-direction: column;
