@@ -3,7 +3,7 @@
     <swiper
       :indicator-dots="shouldShowIndicator && showPaginationDots"
       class="navigation-area__swiper"
-      :style="{ maxHeight: swiperHeight }"
+      :style="{ height: swiperHeight }"
     >
       <swiper-item
         v-for="(pageItems, pageIndex) in paginatedItems"
@@ -16,12 +16,10 @@
           class="navigation-area__swiper-item-content"
           :style="{ width: itemWidthPercentage + '%' }"
         >
-          <view
-            class="navigation-area__swiper-item-image"
-            @click="handleNavigationClick(item)"
-          >
+          <view @click="handleNavigationClick(item)">
             <u-image
               :src="item.image"
+              mode="aspectFill"
               width="85rpx"
               height="85rpx"
               radius="10rpx"
@@ -40,8 +38,8 @@
 export default {
   name: 'NavigationArea',
   props: {
-    // 导航项数据
-    items: {
+    // 导航项数据列表
+    list: {
       type: Array,
       required: true,
     },
@@ -53,7 +51,7 @@ export default {
     // 每页显示的行数
     rowsPerPage: {
       type: Number,
-      default: 1,
+      default: 2,
     },
     // 是否应该显示分页指示器（当只有一页时不显示）
     shouldShowIndicator: {
@@ -62,7 +60,7 @@ export default {
     },
   },
 
-  data () {
+  data() {
     return {
       // 分页后的导航项数组
       paginatedItems: [],
@@ -71,40 +69,58 @@ export default {
 
   computed: {
     // 计算每个导航项的宽度百分比
-    itemWidthPercentage () {
+    itemWidthPercentage() {
       return 100 / this.itemsPerRow
     },
     // 计算轮播组件的高度
-    swiperHeight () {
-      // TODO: 根据实际情况调整高度
-      return `${185 * this.rowsPerPage}rpx`
+    // TODO: 指定轮播组件的高度在有 dot 时会导致 item 上下间距变宽，需要优化
+    swiperHeight() {
+      // 基础高度：一行的高度为 85rpx (图片高度) + 16rpx * 2 (上下边距) + 8rpx (文字上边距) + 24rpx(文字高度) = 157rpx
+      const baseItemHeight = 85 + 16 + 16 + 8 + 24
+      let height = 0
+      if (this.list.length <= this.itemsPerRow) {
+        // 小于等于一行，只显示一行
+        height = baseItemHeight
+      } else {
+        // 超过一行，根据 rowsPerPage 计算高度
+        height = baseItemHeight * this.rowsPerPage
+      }
+
+      // 如果有多页，则加上指示器高度 (假设指示器高度为 50rpx，可根据实际情况调整)
+      if (this.showPaginationDots && this.shouldShowIndicator) {
+        height += 50
+      }
+      return `${height}rpx`
     },
     // 是否显示分页指示点
-    showPaginationDots () {
+    showPaginationDots() {
       return this.paginatedItems.length > 1
     },
   },
 
   watch: {
     // 监听导航项数据的变化，当数据变化时重新进行分页
-    items: {
+    list: {
       handler: 'paginateItems',
       immediate: true,
     },
-  },
-
-  mounted () {
-    // 组件挂载时进行分页
-    this.paginateItems()
+    itemsPerRow: {
+      handler: 'paginateItems',
+    },
+    rowsPerPage: {
+      handler: 'paginateItems',
+    },
   },
 
   methods: {
     // 对导航项数据进行分页
-    paginateItems () {
+    paginateItems() {
       // 计算每页的导航项数量
       const itemsPerPage = this.itemsPerRow * this.rowsPerPage
+      // 最多显示 30 个
+      const slicedList = this.list
       // 使用 reduce 方法对导航项进行分页
-      this.paginatedItems = this.items.reduce((pages, item, index) => {
+      this.paginatedItems = slicedList.reduce((pages, item, index) => {
         const pageIndex = Math.floor(index / itemsPerPage)
         if (!pages[pageIndex]) {
           pages[pageIndex] = []
@@ -115,15 +131,10 @@ export default {
     },
 
     // 处理导航项点击事件
-    handleNavigationClick (item) {
-      // TODO: 使用更具体的跳转逻辑替换示例代码
+    handleNavigationClick(item) {
       this.$dsBridge.call('gotoPageThroughRoute', {
-          page: `${item.h5Link}`,
-        })
-      // uni.showToast({
-      //   title: `导航到: ${item.h5Link}`,
-      //   icon: 'success',
-      // })
+        page: `${item.appLink}`,
+      })
     },
   },
 }
@@ -132,10 +143,7 @@ export default {
 <style lang="scss" scoped>
 .navigation-area {
   border-radius: 16rpx;
-  padding-bottom: 20rpx;
-
-  // &__swiper {
-  // }
+  margin: 20rpx 0;
 
   &__swiper-item {
     display: flex;
@@ -146,13 +154,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 16rpx 0;
     overflow: hidden;
-  }
-
-  &__swiper-item-image {
-    width: 85rpx;
-    height: 85rpx;
   }
 
   &__swiper-item-name {

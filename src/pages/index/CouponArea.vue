@@ -2,9 +2,7 @@
   <view class="coupon-area">
     <!-- 标题和查看更多按钮 -->
     <view class="coupon-area__header">
-      <view class="coupon-area__title">
-        待使用
-      </view>
+      <view class="coupon-area__title"> 待使用 </view>
       <view>
         <u-text
           v-if="list.length > 5"
@@ -27,14 +25,8 @@
       :current="current"
       @change="onSwiperChange"
     >
-      <swiper-item
-        v-for="(item, index) in list"
-        :key="index"
-      >
-        <CouponCard
-          :coupon="item"
-          @click="handleClick"
-        />
+      <swiper-item v-for="(item, index) in list" :key="index">
+        <CouponCard :coupon="item" @click="handleClick" />
       </swiper-item>
     </swiper>
   </view>
@@ -54,27 +46,27 @@ export default {
       required: true,
     },
   },
-  data () {
+  data() {
     return {
       current: 0,
     }
   },
 
   methods: {
-    handleClick (coupon) {
+    handleClick(coupon) {
       // TODO: 跳转 APP
       uni.showToast({
         title: `查看券码: ${coupon.id}`,
         icon: 'success',
       })
     },
-    handleViewMore () {
+    handleViewMore() {
       uni.showToast({
         title: 'TODO 跳转',
         icon: 'none',
       })
     },
-    onSwiperChange (event) {
+    onSwiperChange(event) {
       this.current = event.detail.current
     },
   },
@@ -88,7 +80,7 @@ export default {
   width: 719rpx;
   height: 250rpx;
   margin: 0 auto;
-  margin-bottom: 30rpx;
+  margin-bottom: 40rpx;
 }
 
 /* 标题区域样式 */

@@ -1,5 +1,5 @@
 uni.addInterceptor({
-  returnValue (res) {
+  returnValue(res) {
     if (
       !(
         !!res &&
@@ -33,7 +33,7 @@ uni.addInterceptor({
  */
 export const fetchResourceAPI = () =>
   uni.request({
-    url: 'https://run.mocky.io/v3/7afdb675-02ae-4da9-b213-d642a8b40f32',
+    url: 'https://run.mocky.io/v3/9a5a309d-ee2d-485c-88ba-40bfaafa688d',
     method: 'GET',
   })
 
@@ -133,7 +133,7 @@ export const fetchRecommendClassifyAPI = () =>
  */
 export const fetchProductListAPI = () =>
   uni.request({
-    url: 'https://run.mocky.io/v3/52cb9a94-18cc-4dea-a8a1-cae489fdc135',
+    url: 'https://run.mocky.io/v3/105535ea-f63e-40fa-9352-c1e314ff8554',
     method: 'GET',
   })
 

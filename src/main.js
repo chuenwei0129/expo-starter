@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import App from './App'
-// import './uni.promisify.adaptor'
-
 // main.js
 
 import uView from 'uview-ui'

@@ -61,7 +61,6 @@
 
 <script>
 import GoodsCard from './GoodsCard.vue'
-// import { action_report } from '@/utils/track'
 
 export default {
   name: 'InStoreServiceGoodsList',

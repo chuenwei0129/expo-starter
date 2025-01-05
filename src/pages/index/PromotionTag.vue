@@ -103,10 +103,9 @@ export default {
 </template>
 
 <style scoped>
-.promotion-tag {
+/* .promotion-tag {
   background: white;
-  /* border: 1rpx solid #ffcfd8; */
-}
+} */
 .promotion-tag__content {
   display: flex;
   align-items: center;

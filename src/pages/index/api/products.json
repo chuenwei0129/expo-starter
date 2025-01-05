@@ -1,678 +1,538 @@
 {
   "code": 0,
   "message": "",
-  "data": [
-    {
-      "skuld": "1743147768612917249",
-      "itemId": "1743147768059269121",
-      "image": "https://picsum.photos/200/300",
-      "skuName": "测试-zwl-美容-1",
-      "salePoint": null,
-      "realPrice": 66.66,
-      "salePrice": 5.45,
-      "promotionPrice": 5.44,
-      "shopName": null,
-      "distance": "149.9km",
-      "saledStockQty": null,
-      "promotionTag": {
-        "promotionId": "1872113742495412226",
-        "promotionName": "dev测试优惠券",
-        "promotionType": 1,
-        "rightType": 211,
-        "promotionRule": {
-          "mostAmount": 0,
-          "amount": 0.01,
-          "discount": 0,
-          "isMutex": true,
-          "threshold": 0.01,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 0.01
+  "data": {
+    "total": 1,
+    "pageNum": 1,
+    "pageSize": 10,
+    "totalCount": "23",
+    "data": [
+      {
+        "skuld": "1743147768612917249",
+        "itemId": "1743147768059269121",
+        "itemName": "活体投喂",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-美容-1",
+        "salePoint": null,
+        "realPrice": 66.66,
+        "salePrice": 5.45,
+        "promotionPrice": 5.44,
+        "shopName": null,
+        "distance": "149.9km",
+        "saledStockQty": null,
+        "promotionTag": {
+          "discountAmount": 0,
+          "promotionId": "1872113742495412226",
+          "promotionName": "dev测试优惠券",
+          "promotionType": 1,
+          "rightType": 211,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 10,
+            "discount": 0,
+            "isMutex": true,
+            "threshold": 20,
+            "couponTypeInquiry": ""
+          }
+        }
+      },
+      {
+        "skuld": "1743147768612917250",
+        "itemId": "1743147768059269122",
+        "itemName": "宠物洗澡",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-洗澡-2",
+        "salePoint": "专业护理",
+        "realPrice": 88.88,
+        "salePrice": 10.99,
+        "promotionPrice": 10.88,
+        "shopName": "爱宠之家",
+        "distance": "1.2km",
+        "saledStockQty": 120,
+        "promotionTag": {
+          "discountAmount": 0.11,
+          "promotionId": "1872113742495412227",
+          "promotionName": "开业优惠券",
+          "promotionType": 1,
+          "rightType": 211,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 5,
+            "discount": 0,
+            "isMutex": false,
+            "threshold": 15,
+            "couponTypeInquiry": ""
+          }
+        }
+      },
+      {
+        "skuld": "1743147768612917251",
+        "itemId": "1743147768059269123",
+        "itemName": "宠物美容",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-美容-3",
+        "salePoint": "造型设计",
+        "realPrice": 120.0,
+        "salePrice": 25.0,
+        "promotionPrice": 24.5,
+        "shopName": "时尚宠物",
+        "distance": "2.5km",
+        "saledStockQty": 50,
+        "promotionTag": {
+          "discountAmount": 0.5,
+          "promotionId": "1872113742495412228",
+          "promotionName": "会员优惠券",
+          "promotionType": 2,
+          "rightType": 212,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 0,
+            "discount": 85,
+            "isMutex": true,
+            "threshold": 50,
+            "couponTypeInquiry": ""
+          }
+        }
+      },
+      {
+        "skuld": "1743147768612917252",
+        "itemId": "1743147768059269124",
+        "itemName": "宠物寄养",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-寄养-4",
+        "salePoint": "安全舒适",
+        "realPrice": 50.0,
+        "salePrice": 15.0,
+        "promotionPrice": 14.99,
+        "shopName": null,
+        "distance": "5.0km",
+        "saledStockQty": 20,
+        "promotionTag": null
+      },
+      {
+        "skuld": "1743147768612917253",
+        "itemId": "1743147768059269125",
+        "itemName": "宠物训练",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-训练-5",
+        "salePoint": "行为纠正",
+        "realPrice": 200.0,
+        "salePrice": 150.0,
+        "promotionPrice": 149.0,
+        "shopName": "训犬大师",
+        "distance": "8.8km",
+        "saledStockQty": 10,
+        "promotionTag": {
+          "discountAmount": 1,
+          "promotionId": "1872113742495412229",
+          "promotionName": "体验优惠券",
+          "promotionType": 1,
+          "rightType": 211,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 10,
+            "discount": 0,
+            "isMutex": true,
+            "threshold": 100,
+            "couponTypeInquiry": ""
+          }
+        }
+      },
+      {
+        "skuld": "1743147768612917254",
+        "itemId": "1743147768059269126",
+        "itemName": "宠物医疗",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-医疗-6",
+        "salePoint": "专业兽医",
+        "realPrice": 300.0,
+        "salePrice": 250.0,
+        "promotionPrice": 250.0,
+        "shopName": "宠物医院",
+        "distance": "10.0km",
+        "saledStockQty": 5,
+        "promotionTag": null
+      },
+      {
+        "skuld": "1743147768612917255",
+        "itemId": "1743147768059269127",
+        "itemName": "宠物摄影",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-摄影-7",
+        "salePoint": "留下美好回忆",
+        "realPrice": 150.0,
+        "salePrice": 80.0,
+        "promotionPrice": 79.5,
+        "shopName": "萌宠影楼",
+        "distance": "12.3km",
+        "saledStockQty": 30,
+        "promotionTag": {
+          "discountAmount": 0.5,
+          "promotionId": "1872113742495412230",
+          "promotionName": "团购优惠券",
+          "promotionType": 1,
+          "rightType": 211,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 20,
+            "discount": 0,
+            "isMutex": false,
+            "threshold": 50,
+            "couponTypeInquiry": ""
+          }
+        }
+      },
+      {
+        "skuld": "1743147768612917256",
+        "itemId": "1743147768059269128",
+        "itemName": "宠物零食",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-零食-8",
+        "salePoint": "美味可口",
+        "realPrice": 20.0,
+        "salePrice": 10.0,
+        "promotionPrice": 9.9,
+        "shopName": null,
+        "distance": "15.6km",
+        "saledStockQty": 200,
+        "promotionTag": {
+          "discountAmount": 0.1,
+          "promotionId": "1872113742495412231",
+          "promotionName": "限时优惠券",
+          "promotionType": 1,
+          "rightType": 211,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 2,
+            "discount": 0,
+            "isMutex": true,
+            "threshold": 5,
+            "couponTypeInquiry": ""
+          }
+        }
+      },
+      {
+        "skuld": "1743147768612917257",
+        "itemId": "1743147768059269129",
+        "itemName": "宠物玩具",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-玩具-9",
+        "salePoint": "耐玩益智",
+        "realPrice": 30.0,
+        "salePrice": 15.0,
+        "promotionPrice": 15.0,
+        "shopName": null,
+        "distance": "18.9km",
+        "saledStockQty": 150,
+        "promotionTag": null
+      },
+      {
+        "skuld": "1743147768612917258",
+        "itemId": "1743147768059269130",
+        "itemName": "宠物用品",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-用品-10",
+        "salePoint": "实用舒适",
+        "realPrice": 50.0,
+        "salePrice": 30.0,
+        "promotionPrice": 29.8,
+        "shopName": null,
+        "distance": "22.2km",
+        "saledStockQty": 100,
+        "promotionTag": {
+          "discountAmount": 0.2,
+          "promotionId": "1872113742495412232",
+          "promotionName": "满减优惠券",
+          "promotionType": 1,
+          "rightType": 211,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 5,
+            "discount": 0,
+            "isMutex": false,
+            "threshold": 20,
+            "couponTypeInquiry": ""
+          }
+        }
+      },
+      {
+        "skuld": "1743147768612917259",
+        "itemId": "1743147768059269131",
+        "itemName": "宠物SPA",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-SPA-11",
+        "salePoint": "放松身心",
+        "realPrice": 180.0,
+        "salePrice": 120.0,
+        "promotionPrice": 119.0,
+        "shopName": "奢宠会所",
+        "distance": "25.5km",
+        "saledStockQty": 25,
+        "promotionTag": {
+          "discountAmount": 1,
+          "promotionId": "1872113742495412233",
+          "promotionName": "新客优惠券",
+          "promotionType": 1,
+          "rightType": 211,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 10,
+            "discount": 0,
+            "isMutex": true,
+            "threshold": 80,
+            "couponTypeInquiry": ""
+          }
+        }
+      },
+      {
+        "skuld": "1743147768612917260",
+        "itemId": "1743147768059269132",
+        "itemName": "宠物驱虫",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-驱虫-12",
+        "salePoint": "健康保障",
+        "realPrice": 60.0,
+        "salePrice": 40.0,
+        "promotionPrice": 40.0,
+        "shopName": null,
+        "distance": "28.8km",
+        "saledStockQty": 80,
+        "promotionTag": null
+      },
+      {
+        "skuld": "1743147768612917261",
+        "itemId": "1743147768059269133",
+        "itemName": "宠物疫苗",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-疫苗-13",
+        "salePoint": "预防疾病",
+        "realPrice": 100.0,
+        "salePrice": 80.0,
+        "promotionPrice": 79.8,
+        "shopName": "宠物医院",
+        "distance": "32.1km",
+        "saledStockQty": 60,
+        "promotionTag": {
+          "discountAmount": 0.2,
+          "promotionId": "1872113742495412234",
+          "promotionName": "健康优惠券",
+          "promotionType": 1,
+          "rightType": 211,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 5,
+            "discount": 0,
+            "isMutex": true,
+            "threshold": 30,
+            "couponTypeInquiry": ""
+          }
+        }
+      },
+      {
+        "skuld": "1743147768612917262",
+        "itemId": "1743147768059269134",
+        "itemName": "宠物洁牙",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-洁牙-14",
+        "salePoint": "清新口气",
+        "realPrice": 80.0,
+        "salePrice": 50.0,
+        "promotionPrice": 49.5,
+        "shopName": "宠物口腔护理中心",
+        "distance": "35.4km",
+        "saledStockQty": 40,
+        "promotionTag": {
+          "discountAmount": 0.5,
+          "promotionId": "1872113742495412235",
+          "promotionName": "口腔护理优惠券",
+          "promotionType": 1,
+          "rightType": 211,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 8,
+            "discount": 0,
+            "isMutex": false,
+            "threshold": 40,
+            "couponTypeInquiry": ""
+          }
+        }
+      },
+      {
+        "skuld": "1743147768612917263",
+        "itemId": "1743147768059269135",
+        "itemName": "宠物营养品",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-营养品-15",
+        "salePoint": "增强体质",
+        "realPrice": 40.0,
+        "salePrice": 25.0,
+        "promotionPrice": 25.0,
+        "shopName": null,
+        "distance": "38.7km",
+        "saledStockQty": 90,
+        "promotionTag": null
+      },
+      {
+        "skuld": "1743147768612917264",
+        "itemId": "1743147768059269136",
+        "itemName": "宠物服装",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-服装-16",
+        "salePoint": "时尚潮流",
+        "realPrice": 60.0,
+        "salePrice": 40.0,
+        "promotionPrice": 39.8,
+        "shopName": "萌宠时装店",
+        "distance": "42.0km",
+        "saledStockQty": 70,
+        "promotionTag": {
+          "discountAmount": 0.2,
+          "promotionId": "1872113742495412236",
+          "promotionName": "换季优惠券",
+          "promotionType": 1,
+          "rightType": 211,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 10,
+            "discount": 0,
+            "isMutex": true,
+            "threshold": 50,
+            "couponTypeInquiry": ""
+          }
+        }
+      },
+      {
+        "skuld": "1743147768612917265",
+        "itemId": "1743147768059269137",
+        "itemName": "宠物牵引绳",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-牵引绳-17",
+        "salePoint": "安全耐用",
+        "realPrice": 25.0,
+        "salePrice": 15.0,
+        "promotionPrice": 15.0,
+        "shopName": null,
+        "distance": "45.3km",
+        "saledStockQty": 120,
+        "promotionTag": null
+      },
+      {
+        "skuld": "1743147768612917266",
+        "itemId": "1743147768059269138",
+        "itemName": "宠物笼子",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-笼子-18",
+        "salePoint": "宽敞舒适",
+        "realPrice": 100.0,
+        "salePrice": 70.0,
+        "promotionPrice": 69.5,
+        "shopName": null,
+        "distance": "48.6km",
+        "saledStockQty": 50,
+        "promotionTag": {
+          "discountAmount": 0.5,
+          "promotionId": "1872113742495412237",
+          "promotionName": "大件优惠券",
+          "promotionType": 1,
+          "rightType": 211,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 15,
+            "discount": 0,
+            "isMutex": false,
+            "threshold": 60,
+            "couponTypeInquiry": ""
+          }
+        }
+      },
+      {
+        "skuld": "1743147768612917267",
+        "itemId": "1743147768059269139",
+        "itemName": "宠物猫砂",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-猫砂-19",
+        "salePoint": "吸水除臭",
+        "realPrice": 35.0,
+        "salePrice": 20.0,
+        "promotionPrice": 20.0,
+        "shopName": null,
+        "distance": "51.9km",
+        "saledStockQty": 180,
+        "promotionTag": null
+      },
+      {
+        "skuld": "1743147768612917268",
+        "itemId": "1743147768059269140",
+        "itemName": "宠物饮水器",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-饮水器-20",
+        "salePoint": "自动循环",
+        "realPrice": 45.0,
+        "salePrice": 30.0,
+        "promotionPrice": 29.9,
+        "shopName": null,
+        "distance": "55.2km",
+        "saledStockQty": 80,
+        "promotionTag": {
+          "discountAmount": 0.1,
+          "promotionId": "1872113742495412238",
+          "promotionName": "电器优惠券",
+          "promotionType": 1,
+          "rightType": 211,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 5,
+            "discount": 0,
+            "isMutex": true,
+            "threshold": 25,
+            "couponTypeInquiry": ""
+          }
+        }
+      },
+      {
+        "skuld": "1743147768612917269",
+        "itemId": "1743147768059269141",
+        "itemName": "宠物梳子",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-梳子-21",
+        "salePoint": "去除浮毛",
+        "realPrice": 20.0,
+        "salePrice": 12.0,
+        "promotionPrice": 12.0,
+        "shopName": null,
+        "distance": "58.5km",
+        "saledStockQty": 100,
+        "promotionTag": null
+      },
+      {
+        "skuld": "1743147768612917270",
+        "itemId": "1743147768059269142",
+        "itemName": "宠物沐浴露",
+        "image": "https://picsum.photos/200/300",
+        "skuName": "测试-zwl-沐浴露-22",
+        "salePoint": "温和不刺激",
+        "realPrice": 40.0,
+        "salePrice": 25.0,
+        "promotionPrice": 24.8,
+        "shopName": null,
+        "distance": "61.8km",
+        "saledStockQty": 90,
+        "promotionTag": {
+          "discountAmount": 0.2,
+          "promotionId": "1872113742495412239",
+          "promotionName": "洗护优惠券",
+          "promotionType": 1,
+          "rightType": 211,
+          "promotionRule": {
+            "mostAmount": "",
+            "amount": 5,
+            "discount": 0,
+            "isMutex": false,
+            "threshold": 20,
+            "couponTypeInquiry": ""
+          }
+        }
       }
-    },
-    {
-      "skuld": "1743147768612917250",
-      "itemId": "1743147768059269122",
-      "image": "https://picsum.photos/201/301",
-      "skuName": "测试商品2",
-      "salePoint": "卖点2",
-      "realPrice": 80.0,
-      "salePrice": 60.0,
-      "promotionPrice": 55.0,
-      "shopName": "门店2",
-      "distance": "50km",
-      "saledStockQty": "200",
-      "promotionTag": {
-        "promotionId": "1872113742495412227",
-        "promotionName": "促销优惠2",
-        "promotionType": 2,
-        "rightType": 212,
-        "promotionRule": {
-          "mostAmount": 5,
-          "amount": 0.05,
-          "discount": 0.05,
-          "isMutex": false,
-          "threshold": 10.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 5.0
-      }
-    },
-    {
-      "skuld": "1743147768612917251",
-      "itemId": "1743147768059269123",
-      "image": "https://picsum.photos/202/302",
-      "skuName": "测试商品3",
-      "salePoint": "卖点3",
-      "realPrice": 100.0,
-      "salePrice": 80.0,
-      "promotionPrice": 75.0,
-      "shopName": "门店3",
-      "distance": "100km",
-      "saledStockQty": "150",
-      "promotionTag": {
-        "promotionId": "1872113742495412228",
-        "promotionName": "优惠活动3",
-        "promotionType": 1,
-        "rightType": 213,
-        "promotionRule": {
-          "mostAmount": 10,
-          "amount": 0.1,
-          "discount": 0.1,
-          "isMutex": true,
-          "threshold": 20.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 10.0
-      }
-    },
-    {
-      "skuld": "1743147768612917252",
-      "itemId": "1743147768059269124",
-      "image": "https://picsum.photos/203/303",
-      "skuName": "测试商品4",
-      "salePoint": "卖点4",
-      "realPrice": 150.0,
-      "salePrice": 130.0,
-      "promotionPrice": 125.0,
-      "shopName": "门店4",
-      "distance": "200km",
-      "saledStockQty": "300",
-      "promotionTag": {
-        "promotionId": "1872113742495412229",
-        "promotionName": "促销活动4",
-        "promotionType": 2,
-        "rightType": 214,
-        "promotionRule": {
-          "mostAmount": 15,
-          "amount": 0.15,
-          "discount": 0.15,
-          "isMutex": false,
-          "threshold": 30.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 15.0
-      }
-    },
-    {
-      "skuld": "1743147768612917249",
-      "itemId": "1743147768059269121",
-      "image": "https://picsum.photos/200/300",
-      "skuName": "测试-zwl-美容-1",
-      "salePoint": null,
-      "realPrice": 66.66,
-      "salePrice": 5.45,
-      "promotionPrice": 5.44,
-      "shopName": null,
-      "distance": "149.9km",
-      "saledStockQty": null,
-      "promotionTag": {
-        "promotionId": "1872113742495412226",
-        "promotionName": "dev测试优惠券",
-        "promotionType": 1,
-        "rightType": 211,
-        "promotionRule": {
-          "mostAmount": 0,
-          "amount": 0.01,
-          "discount": 0,
-          "isMutex": true,
-          "threshold": 0.01,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 0.01
-      }
-    },
-    {
-      "skuld": "1743147768612917250",
-      "itemId": "1743147768059269122",
-      "image": "https://picsum.photos/201/301",
-      "skuName": "测试商品2",
-      "salePoint": "卖点2",
-      "realPrice": 80.0,
-      "salePrice": 60.0,
-      "promotionPrice": 55.0,
-      "shopName": "门店2",
-      "distance": "50km",
-      "saledStockQty": "200",
-      "promotionTag": {
-        "promotionId": "1872113742495412227",
-        "promotionName": "促销优惠2",
-        "promotionType": 2,
-        "rightType": 212,
-        "promotionRule": {
-          "mostAmount": 5,
-          "amount": 0.05,
-          "discount": 0.05,
-          "isMutex": false,
-          "threshold": 10.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 5.0
-      }
-    },
-    {
-      "skuld": "1743147768612917251",
-      "itemId": "1743147768059269123",
-      "image": "https://picsum.photos/202/302",
-      "skuName": "测试商品3",
-      "salePoint": "卖点3",
-      "realPrice": 100.0,
-      "salePrice": 80.0,
-      "promotionPrice": 75.0,
-      "shopName": "门店3",
-      "distance": "100km",
-      "saledStockQty": "150",
-      "promotionTag": {
-        "promotionId": "1872113742495412228",
-        "promotionName": "优惠活动3",
-        "promotionType": 1,
-        "rightType": 213,
-        "promotionRule": {
-          "mostAmount": 10,
-          "amount": 0.1,
-          "discount": 0.1,
-          "isMutex": true,
-          "threshold": 20.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 10.0
-      }
-    },
-    {
-      "skuld": "1743147768612917252",
-      "itemId": "1743147768059269124",
-      "image": "https://picsum.photos/203/303",
-      "skuName": "测试商品4",
-      "salePoint": "卖点4",
-      "realPrice": 150.0,
-      "salePrice": 130.0,
-      "promotionPrice": 125.0,
-      "shopName": "门店4",
-      "distance": "200km",
-      "saledStockQty": "300",
-      "promotionTag": {
-        "promotionId": "1872113742495412229",
-        "promotionName": "促销活动4",
-        "promotionType": 2,
-        "rightType": 214,
-        "promotionRule": {
-          "mostAmount": 15,
-          "amount": 0.15,
-          "discount": 0.15,
-          "isMutex": false,
-          "threshold": 30.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 15.0
-      }
-    },
-    {
-      "skuld": "1743147768612917249",
-      "itemId": "1743147768059269121",
-      "image": "https://picsum.photos/200/300",
-      "skuName": "测试-zwl-美容-1",
-      "salePoint": null,
-      "realPrice": 66.66,
-      "salePrice": 5.45,
-      "promotionPrice": 5.44,
-      "shopName": null,
-      "distance": "149.9km",
-      "saledStockQty": null,
-      "promotionTag": {
-        "promotionId": "1872113742495412226",
-        "promotionName": "dev测试优惠券",
-        "promotionType": 1,
-        "rightType": 211,
-        "promotionRule": {
-          "mostAmount": 0,
-          "amount": 0.01,
-          "discount": 0,
-          "isMutex": true,
-          "threshold": 0.01,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 0.01
-      }
-    },
-    {
-      "skuld": "1743147768612917250",
-      "itemId": "1743147768059269122",
-      "image": "https://picsum.photos/201/301",
-      "skuName": "测试商品2",
-      "salePoint": "卖点2",
-      "realPrice": 80.0,
-      "salePrice": 60.0,
-      "promotionPrice": 55.0,
-      "shopName": "门店2",
-      "distance": "50km",
-      "saledStockQty": "200",
-      "promotionTag": {
-        "promotionId": "1872113742495412227",
-        "promotionName": "促销优惠2",
-        "promotionType": 2,
-        "rightType": 212,
-        "promotionRule": {
-          "mostAmount": 5,
-          "amount": 0.05,
-          "discount": 0.05,
-          "isMutex": false,
-          "threshold": 10.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 5.0
-      }
-    },
-    {
-      "skuld": "1743147768612917251",
-      "itemId": "1743147768059269123",
-      "image": "https://picsum.photos/202/302",
-      "skuName": "测试商品3",
-      "salePoint": "卖点3",
-      "realPrice": 100.0,
-      "salePrice": 80.0,
-      "promotionPrice": 75.0,
-      "shopName": "门店3",
-      "distance": "100km",
-      "saledStockQty": "150",
-      "promotionTag": {
-        "promotionId": "1872113742495412228",
-        "promotionName": "优惠活动3",
-        "promotionType": 1,
-        "rightType": 213,
-        "promotionRule": {
-          "mostAmount": 10,
-          "amount": 0.1,
-          "discount": 0.1,
-          "isMutex": true,
-          "threshold": 20.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 10.0
-      }
-    },
-    {
-      "skuld": "1743147768612917252",
-      "itemId": "1743147768059269124",
-      "image": "https://picsum.photos/203/303",
-      "skuName": "测试商品4",
-      "salePoint": "卖点4",
-      "realPrice": 150.0,
-      "salePrice": 130.0,
-      "promotionPrice": 125.0,
-      "shopName": "门店4",
-      "distance": "200km",
-      "saledStockQty": "300",
-      "promotionTag": {
-        "promotionId": "1872113742495412229",
-        "promotionName": "促销活动4",
-        "promotionType": 2,
-        "rightType": 214,
-        "promotionRule": {
-          "mostAmount": 15,
-          "amount": 0.15,
-          "discount": 0.15,
-          "isMutex": false,
-          "threshold": 30.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 15.0
-      }
-    },
-    {
-      "skuld": "1743147768612917249",
-      "itemId": "1743147768059269121",
-      "image": "https://picsum.photos/200/300",
-      "skuName": "测试-zwl-美容-1",
-      "salePoint": null,
-      "realPrice": 66.66,
-      "salePrice": 5.45,
-      "promotionPrice": 5.44,
-      "shopName": null,
-      "distance": "149.9km",
-      "saledStockQty": null,
-      "promotionTag": {
-        "promotionId": "1872113742495412226",
-        "promotionName": "dev测试优惠券",
-        "promotionType": 1,
-        "rightType": 211,
-        "promotionRule": {
-          "mostAmount": 0,
-          "amount": 0.01,
-          "discount": 0,
-          "isMutex": true,
-          "threshold": 0.01,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 0.01
-      }
-    },
-    {
-      "skuld": "1743147768612917250",
-      "itemId": "1743147768059269122",
-      "image": "https://picsum.photos/201/301",
-      "skuName": "测试商品2",
-      "salePoint": "卖点2",
-      "realPrice": 80.0,
-      "salePrice": 60.0,
-      "promotionPrice": 55.0,
-      "shopName": "门店2",
-      "distance": "50km",
-      "saledStockQty": "200",
-      "promotionTag": {
-        "promotionId": "1872113742495412227",
-        "promotionName": "促销优惠2",
-        "promotionType": 2,
-        "rightType": 212,
-        "promotionRule": {
-          "mostAmount": 5,
-          "amount": 0.05,
-          "discount": 0.05,
-          "isMutex": false,
-          "threshold": 10.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 5.0
-      }
-    },
-    {
-      "skuld": "1743147768612917251",
-      "itemId": "1743147768059269123",
-      "image": "https://picsum.photos/202/302",
-      "skuName": "测试商品3",
-      "salePoint": "卖点3",
-      "realPrice": 100.0,
-      "salePrice": 80.0,
-      "promotionPrice": 75.0,
-      "shopName": "门店3",
-      "distance": "100km",
-      "saledStockQty": "150",
-      "promotionTag": {
-        "promotionId": "1872113742495412228",
-        "promotionName": "优惠活动3",
-        "promotionType": 1,
-        "rightType": 213,
-        "promotionRule": {
-          "mostAmount": 10,
-          "amount": 0.1,
-          "discount": 0.1,
-          "isMutex": true,
-          "threshold": 20.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 10.0
-      }
-    },
-    {
-      "skuld": "1743147768612917252",
-      "itemId": "1743147768059269124",
-      "image": "https://picsum.photos/203/303",
-      "skuName": "测试商品4",
-      "salePoint": "卖点4",
-      "realPrice": 150.0,
-      "salePrice": 130.0,
-      "promotionPrice": 125.0,
-      "shopName": "门店4",
-      "distance": "200km",
-      "saledStockQty": "300",
-      "promotionTag": {
-        "promotionId": "1872113742495412229",
-        "promotionName": "促销活动4",
-        "promotionType": 2,
-        "rightType": 214,
-        "promotionRule": {
-          "mostAmount": 15,
-          "amount": 0.15,
-          "discount": 0.15,
-          "isMutex": false,
-          "threshold": 30.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 15.0
-      }
-    },
-    {
-      "skuld": "1743147768612917249",
-      "itemId": "1743147768059269121",
-      "image": "https://picsum.photos/200/300",
-      "skuName": "测试-zwl-美容-1",
-      "salePoint": null,
-      "realPrice": 66.66,
-      "salePrice": 5.45,
-      "promotionPrice": 5.44,
-      "shopName": null,
-      "distance": "149.9km",
-      "saledStockQty": null,
-      "promotionTag": {
-        "promotionId": "1872113742495412226",
-        "promotionName": "dev测试优惠券",
-        "promotionType": 1,
-        "rightType": 211,
-        "promotionRule": {
-          "mostAmount": 0,
-          "amount": 0.01,
-          "discount": 0,
-          "isMutex": true,
-          "threshold": 0.01,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 0.01
-      }
-    },
-    {
-      "skuld": "1743147768612917250",
-      "itemId": "1743147768059269122",
-      "image": "https://picsum.photos/201/301",
-      "skuName": "测试商品2",
-      "salePoint": "卖点2",
-      "realPrice": 80.0,
-      "salePrice": 60.0,
-      "promotionPrice": 55.0,
-      "shopName": "门店2",
-      "distance": "50km",
-      "saledStockQty": "200",
-      "promotionTag": {
-        "promotionId": "1872113742495412227",
-        "promotionName": "促销优惠2",
-        "promotionType": 2,
-        "rightType": 212,
-        "promotionRule": {
-          "mostAmount": 5,
-          "amount": 0.05,
-          "discount": 0.05,
-          "isMutex": false,
-          "threshold": 10.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 5.0
-      }
-    },
-    {
-      "skuld": "1743147768612917251",
-      "itemId": "1743147768059269123",
-      "image": "https://picsum.photos/202/302",
-      "skuName": "测试商品3",
-      "salePoint": "卖点3",
-      "realPrice": 100.0,
-      "salePrice": 80.0,
-      "promotionPrice": 75.0,
-      "shopName": "门店3",
-      "distance": "100km",
-      "saledStockQty": "150",
-      "promotionTag": {
-        "promotionId": "1872113742495412228",
-        "promotionName": "优惠活动3",
-        "promotionType": 1,
-        "rightType": 213,
-        "promotionRule": {
-          "mostAmount": 10,
-          "amount": 0.1,
-          "discount": 0.1,
-          "isMutex": true,
-          "threshold": 20.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 10.0
-      }
-    },
-    {
-      "skuld": "1743147768612917252",
-      "itemId": "1743147768059269124",
-      "image": "https://picsum.photos/203/303",
-      "skuName": "测试商品4",
-      "salePoint": "卖点4",
-      "realPrice": 150.0,
-      "salePrice": 130.0,
-      "promotionPrice": 125.0,
-      "shopName": "门店4",
-      "distance": "200km",
-      "saledStockQty": "300",
-      "promotionTag": {
-        "promotionId": "1872113742495412229",
-        "promotionName": "促销活动4",
-        "promotionType": 2,
-        "rightType": 214,
-        "promotionRule": {
-          "mostAmount": 15,
-          "amount": 0.15,
-          "discount": 0.15,
-          "isMutex": false,
-          "threshold": 30.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 15.0
-      }
-    },
-    {
-      "skuld": "1743147768612917249",
-      "itemId": "1743147768059269121",
-      "image": "https://picsum.photos/200/300",
-      "skuName": "测试-zwl-美容-1",
-      "salePoint": null,
-      "realPrice": 66.66,
-      "salePrice": 5.45,
-      "promotionPrice": 5.44,
-      "shopName": null,
-      "distance": "149.9km",
-      "saledStockQty": null,
-      "promotionTag": {
-        "promotionId": "1872113742495412226",
-        "promotionName": "dev测试优惠券",
-        "promotionType": 1,
-        "rightType": 211,
-        "promotionRule": {
-          "mostAmount": 0,
-          "amount": 0.01,
-          "discount": 0,
-          "isMutex": true,
-          "threshold": 0.01,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 0.01
-      }
-    },
-    {
-      "skuld": "1743147768612917250",
-      "itemId": "1743147768059269122",
-      "image": "https://picsum.photos/201/301",
-      "skuName": "测试商品2",
-      "salePoint": "卖点2",
-      "realPrice": 80.0,
-      "salePrice": 60.0,
-      "promotionPrice": 55.0,
-      "shopName": "门店2",
-      "distance": "50km",
-      "saledStockQty": "200",
-      "promotionTag": {
-        "promotionId": "1872113742495412227",
-        "promotionName": "促销优惠2",
-        "promotionType": 2,
-        "rightType": 212,
-        "promotionRule": {
-          "mostAmount": 5,
-          "amount": 0.05,
-          "discount": 0.05,
-          "isMutex": false,
-          "threshold": 10.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 5.0
-      }
-    },
-    {
-      "skuld": "1743147768612917251",
-      "itemId": "1743147768059269123",
-      "image": "https://picsum.photos/202/302",
-      "skuName": "测试商品3",
-      "salePoint": "卖点3",
-      "realPrice": 100.0,
-      "salePrice": 80.0,
-      "promotionPrice": 75.0,
-      "shopName": "门店3",
-      "distance": "100km",
-      "saledStockQty": "150",
-      "promotionTag": {
-        "promotionId": "1872113742495412228",
-        "promotionName": "优惠活动3",
-        "promotionType": 1,
-        "rightType": 213,
-        "promotionRule": {
-          "mostAmount": 10,
-          "amount": 0.1,
-          "discount": 0.1,
-          "isMutex": true,
-          "threshold": 20.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 10.0
-      }
-    },
-    {
-      "skuld": "1743147768612917252",
-      "itemId": "1743147768059269124",
-      "image": "https://picsum.photos/203/303",
-      "skuName": "测试商品4",
-      "salePoint": "卖点4",
-      "realPrice": 150.0,
-      "salePrice": 130.0,
-      "promotionPrice": 125.0,
-      "shopName": "门店4",
-      "distance": "200km",
-      "saledStockQty": "300",
-      "promotionTag": {
-        "promotionId": "1872113742495412229",
-        "promotionName": "促销活动4",
-        "promotionType": 2,
-        "rightType": 214,
-        "promotionRule": {
-          "mostAmount": 15,
-          "amount": 0.15,
-          "discount": 0.15,
-          "isMutex": false,
-          "threshold": 30.0,
-          "couponTypeInquiry": ""
-        },
-        "discountAmount": 15.0
-      }
-    }
-  ]
+    ]
+  }
 }

@@ -1,8 +1,15 @@
 <template>
   <view class="cart-button" @click="handleClick">
     <view v-if="cartItemCount" class="cart-button__badge">
-      {{ cartItemCount }}
+      <u-icon
+        v-if="cartItemCount > 99"
+        name="more-dot-fill"
+        color="#fff"
+        size="12"
+      ></u-icon>
+      <text v-else>{{ cartItemCount }}</text>
     </view>
+
     <i class="iconfont icon-a-ShoppingCart" style="font-size: 46rpx" />
   </view>
 </template>
@@ -30,7 +37,7 @@ export default {
       //   cartType: 1,
       // })
       // const { data } = res.data
-      this.cartItemCount = 1
+      this.cartItemCount = 100
     },
   },
 }
@@ -56,8 +63,10 @@ export default {
     border-radius: 50%;
     width: 34rpx;
     height: 34rpx;
-    line-height: 34rpx;
-    text-align: center;
+    /* 使用 flex 布局使内容居中 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>

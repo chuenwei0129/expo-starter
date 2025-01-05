@@ -1,5 +1,5 @@
 <template>
-  <MyTabs
+  <u-tabs
     :list="list"
     line-width="31rpx"
     line-height="2"
@@ -16,18 +16,13 @@
       transform: 'scale(1)',
     }"
     :current="tabIndex"
-    @click="handleChooseTab"
+    @click="handleClickTab"
   />
 </template>
 
 <script>
-// import MyTabs from '@/pages/mall/components/choiceness/customTabs/customTabs.vue'
-import MyTabs from '../../components/customTabs/customTabs.vue'
 export default {
   name: 'FilterTabs',
-  components: {
-    MyTabs,
-  },
   props: {
     list: {
       type: Array,
@@ -55,7 +50,7 @@ export default {
     })
   },
   methods: {
-    handleChooseTab(item) {
+    handleClickTab(item) {
       const { rect } = item
       if (rect) {
         this.tabWidth = rect.width - 24 > 28 ? rect.width - 24 : 28

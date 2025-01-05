@@ -24,10 +24,10 @@
         :span="12 / filterList.length"
         @click="handleClickProduct(item)"
       >
-        <ProductCard
+        <ResourceCard
           :product="item"
-          :is-horizontal="filterList.length === 1"
-          :is-three-columns="filterList.length === 3"
+          :is-one="filterList.length === 1"
+          :is-more="filterList.length >= 3"
         />
       </u-col>
     </u-row>
@@ -35,12 +35,12 @@
 </template>
 
 <script>
-import ProductCard from './ResourceCard.vue'
+import ResourceCard from './ResourceCard.vue'
 
 export default {
   name: 'ResourceItem',
   components: {
-    ProductCard,
+    ResourceCard,
   },
   props: {
     resource: {
@@ -77,12 +77,10 @@ export default {
 
 <style scoped>
 .resource-item {
-  width: 96%;
+  width: 719rpx;
   margin: 0 auto;
   margin-bottom: 25rpx;
   border-radius: 16rpx;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
 }
 
 /* 标题区域样式 */
@@ -90,7 +88,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30rpx;
+  padding: 30rpx;
+  background-color: #fff;
+  border-radius: 23rpx;
 }
 
 .resource-item__title {
@@ -98,27 +98,5 @@ export default {
   font-size: 31rpx;
   color: #1f1f1f;
   line-height: 42rpx;
-}
-
-/* 查看更多按钮样式 */
-.u-text {
-  font-size: 28rpx;
-  color: #666666;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.u-text:hover {
-  color: #007bff;
-}
-
-/* 卡片布局样式 */
-.u-row {
-  margin: 0 -10rpx;
-}
-
-.u-col {
-  padding: 0 10rpx;
-  margin-bottom: 20rpx;
 }
 </style>

@@ -1,9 +1,6 @@
 <template>
   <view class="component-area">
-    <u-row
-      class="component-area__list"
-      :gutter="10"
-    >
+    <u-row class="component-area__list" :gutter="10">
       <!-- 根据子项数量动态设置列宽 -->
       <u-col
         v-for="(item, index) in list"
@@ -36,11 +33,11 @@ export default {
     },
   },
   computed: {
-    itemSpan () {
+    itemSpan() {
       return this.list.length > 0 ? 12 / this.list.length : 12
     },
     // 计算最大图片高度，遍历 list 数组，找到最高的图片高度
-    maxImageHeight () {
+    maxImageHeight() {
       const maxHeight = Math.max(...this.list.map((item) => item.imageHeight))
       return maxHeight
     },
@@ -59,10 +56,10 @@ export default {
     // },
   },
   methods: {
-    handleClick (link) {
+    handleClick(link) {
       this.$dsBridge.call('gotoPageThroughRoute', {
-          page: `${link}`,
-        })
+        page: `${link}`,
+      })
     },
   },
 }
@@ -93,9 +90,4 @@ export default {
   border-radius: 16rpx;
   transition: transform var(--animation-duration, 0.3s);
 }
-
-/* 图片 hover 效果 */
-// .component-area__image:hover {
-//   transform: scale(1.1);
-// }
 </style>

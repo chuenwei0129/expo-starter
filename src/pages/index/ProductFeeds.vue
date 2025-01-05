@@ -1,19 +1,19 @@
 <template>
   <view>
-    <view v-if="formattedProducts.length">
-      <!-- 分类标签 -->
-      <view class="sticky-container">
-        <FilterTabs :list="tabList" @onSwitch="onSwitchTab" />
-        <FilterOptions @filterChange="onFilterChange" />
-      </view>
-      <!-- 展示商品信息 -->
-      <ProductList :goods="formattedProducts" />
+    <!-- 分类标签 -->
+    <view class="sticky-container" v-if="list.length">
+      <FilterTabs :list="tabList" @onSwitch="onSwitchTab" />
+      <FilterOptions @filterChange="onFilterChange" />
     </view>
-    <NoData
-      v-else
-      :is-show-more="false"
-      img="https://frontend-cdn.chongpangpang.com/image/medical-mp/chat/empty-sheet-tag.png"
-    />
+    <!-- 展示商品信息 -->
+    <view style="margin-top: 30rpx">
+      <ProductList v-if="products.length" :goods="formattedProducts" />
+      <NoData
+        v-else-if="!isFetchingProducts && !products.length"
+        :is-show-more="false"
+        img="https://frontend-cdn.chongpangpang.com/image/medical-mp/chat/empty-sheet-tag.png"
+      />
+    </view>
   </view>
 </template>
 
@@ -43,7 +43,7 @@ export default {
   },
   data() {
     return {
-      tabList: [],
+      list: [],
       products: [], // 新增：商品列表数据
       isFetchingProducts: false,
       params: {
@@ -79,8 +79,11 @@ export default {
         }
       })
     },
+    tabList() {
+      return [{ id: 0, name: '推荐' }, ...this.list]
+    },
   },
-  async created() {
+  async mounted() {
     await this.fetchRecommendClassifyData()
     await this.fetchProductListData()
   },
@@ -88,8 +91,7 @@ export default {
     async fetchRecommendClassifyData() {
       const resp = await fetchRecommendClassifyAPI()
       console.log('🚀 ~ fetchRecommendClassifyData ~ resp:', resp)
-      const list = resp.data.data.filter((item) => item.recommendType === 1)
-      this.tabList = [{ id: 0, name: '推荐' }, ...list]
+      this.list = resp.data.data.filter((item) => item.recommendType === 1)
     },
     async fetchProductListData() {
       const { cityCode, lon: lng, lat } = this.locationInfo
@@ -113,8 +115,8 @@ export default {
         this.products = resp.data.data.data || []
       }
     },
-    // },
     onSwitchTab(tabIndex) {
+      console.log('🚀 ~ onSwitchTab ~ tabIndex:', tabIndex)
       if (this.params.categoryId === tabIndex) {
         return
       }

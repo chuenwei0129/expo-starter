@@ -1,34 +1,32 @@
 <template>
   <view
     class="product-card"
-    :class="{ 'product-card--horizontal': isHorizontal }"
+    :class="{
+      'product-card--one': isOne,
+      'product-card--more': isMore,
+    }"
   >
     <!-- 商品图 -->
-    <view class="product-card__image-container">
-      <image
-        class="product-card__image"
-        :src="product.image"
-      />
-      <!-- <view
-        v-if="!isHorizontal"
-        class="product-card__overlay"
-      >
-        100.5km | 南京栖霞宠胖胖万象汇
-      </view> -->
-    </view>
+    <image
+      class="product-card__image"
+      mode="scaleToFill"
+      :src="product.image"
+    />
     <!-- 商品信息 -->
     <view class="product-card__info">
       <!-- 商品名 -->
       <view class="product-card__name">
         <text>
-          {{ product.name }}
+          {{ product.itemName }}
         </text>
       </view>
       <!-- 营销信息 -->
-      <view class="product-card__promotion">
-        <!-- <text>促销 100 减 300</text> -->
-        <!-- TODO: 规则 -->
+      <view
+        class="product-card__promotion"
+        :class="{ 'product-card__promotion--empty': !hasPromotion }"
+      >
         <PromotionTag
+          v-if="hasPromotion"
           :text-size="21"
           :icon-size="21"
           :is-coupon-text="true"
@@ -41,9 +39,7 @@
       </view>
       <view class="product-card__price-sales">
         <!-- 商品价格 -->
-        <view class="product-card__price">
-          ￥{{ product.realPrice }}
-        </view>
+        <view class="product-card__price"> ￥{{ product.realPrice }} </view>
         <!-- 商品销量 -->
         <view class="product-card__sales">
           销量 {{ product.saledStockQty || 0 }}
@@ -65,36 +61,43 @@ export default {
       type: Object,
       required: true,
     },
-    isHorizontal: {
+    isOne: {
+      type: Boolean,
+      default: false,
+    },
+    isMore: {
       type: Boolean,
       default: false,
     },
   },
-  data () {
-    return {}
+  computed: {
+    hasPromotion() {
+      return (
+        this.product.promotionTag &&
+        this.product.promotionTag.promotionId.length > 0
+      )
+    },
   },
-  methods: {},
 }
 </script>
 
 <style scoped lang="scss">
 .product-card {
-  background: #ffffff;
   border-radius: 23rpx;
   display: flex;
   // 默认垂直布局
   flex-direction: column;
+  background-color: #fff;
 
-  &--horizontal {
+  &--one {
     // 水平布局
     flex-direction: row;
     align-items: center;
-    padding: 20rpx;
 
     .product-card__image {
       // 图片容器占据较小空间
-      width: 200rpx;
-      height: 200rpx;
+      width: 138rpx;
+      height: 138rpx;
       margin-right: 20rpx;
       border-radius: 23rpx;
     }
@@ -105,26 +108,18 @@ export default {
     }
   }
 
-  &__image-container {
-    position: relative;
+  &--more {
+    .product-card__image {
+      width: 208rpx;
+      height: 208rpx;
+      border-radius: 23rpx;
+    }
   }
 
   &__image {
-    // 图片默认样式，后续会被水平布局覆盖
     width: 100%;
-    height: 400rpx;
+    height: 352rpx;
     border-radius: 23rpx;
-  }
-
-  &__overlay {
-    position: absolute;
-    bottom: 0.5rem;
-    left: 0.5rem;
-    background-color: rgba(128, 128, 128, 0.5);
-    color: #ffffff;
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
   }
 
   &__info {
@@ -147,14 +142,18 @@ export default {
     text-align: left;
     font-style: normal;
     margin-top: 10rpx;
+    // 为没有营销信息的元素添加高度，保持卡片高度一致
+    &--empty {
+      min-height: 31rpx; // 使用和有营销信息时相同的高度
+    }
   }
 
   &__price-sales {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 30rpx;
     margin-top: 15rpx;
+    gap: 15rpx;
   }
 
   &__price {

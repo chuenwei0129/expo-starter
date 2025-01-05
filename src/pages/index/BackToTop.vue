@@ -4,9 +4,7 @@
     :class="{ 'back-to-top--full-show': type === 1 }"
     @click="$emit('click')"
   >
-    <slot name="icon">
-      ▲
-    </slot>
+    <slot name="icon"> ▲ </slot>
   </view>
 </template>
 
@@ -19,7 +17,7 @@ export default {
       default: 1000,
     },
   },
-  data () {
+  data() {
     return {
       // 1|0.5|0 完全显示|半显示|不显示
       type: 1,
@@ -28,7 +26,7 @@ export default {
     }
   },
   methods: {
-    isScroll () {
+    isScroll() {
       // 如果页面正在滚动，则半显示
       if (this.type === 1) {
         this.type = 0.5
@@ -55,14 +53,14 @@ export default {
 .back-to-top {
   position: fixed;
   bottom: 60px;
-    /* width: 60px;
+  /* width: 60px;
   height: 60px;
   background-color: #ecdcd7; */
   right: -38rpx; /* 初始状态，半隐藏（宽度为60px） */
   width: 76rpx;
   height: 76rpx;
-  background: rgba(255,255,255,0.3);
-  box-shadow: 0rpx 4rpx 15rpx 0rpx rgba(0,0,0,0.1);
+  background-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0rpx 4rpx 15rpx 0rpx rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   color: black;
   display: flex;
@@ -77,8 +75,6 @@ export default {
   right: 20px; /* 全部展示 */
   opacity: 1;
   transform: scale(1.1);
-  background: #FFFFFF;
-  box-shadow: 0rpx 4rpx 15rpx 0rpx rgba(0,0,0,0.1);
-  backdrop-filter: blur(10px);
+  background-color: #ffffff;
 }
 </style>

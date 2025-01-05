@@ -46,9 +46,18 @@
               />
             </view>
           </view>
-          <view class="in-store-service__search-bar-back">
+          <view
+            class="in-store-service__search-bar-back"
+            @click="goToSearchPage"
+          >
             <!-- 根据滚动状态显示或隐藏搜索图标 -->
-            <image
+            <!-- <view
+              class="input-btn iconfont icon-search"
+              v-if="isNavBarFixed || isSearchIconVisible"
+            ></view> -->
+            <u-icon
+              name="search"
+              size="28"
               v-if="isNavBarFixed || isSearchIconVisible"
               :class="{
                 'in-store-service__search-icon--visible': isNavBarFixed,
@@ -58,7 +67,18 @@
               class="in-store-service__search-icon"
               mode="widthFix"
               @click="goToSearchPage"
-            />
+            ></u-icon>
+            <!-- <image
+              v-if="isNavBarFixed || isSearchIconVisible"
+              :class="{
+                'in-store-service__search-icon--visible': isNavBarFixed,
+                'in-store-service__search-icon--hidden': !isNavBarFixed,
+              }"
+              src="https://frontend-cdn.chongpangpang.com/image/medical-mp/index2/header-search.png"
+              class="in-store-service__search-icon"
+              mode="widthFix"
+              @click="goToSearchPage"
+            /> -->
             <CartButton ref="cartButtonRef" />
           </view>
         </view>
@@ -85,50 +105,56 @@
     <view v-show="!isNavBarFixed" class="in-store-service__search-box">
       <SearchBar />
     </view>
-    <!-- 内容区 -->
-    <scroll-view
-      v-if="shopByCityList.data.length"
-      scroll-y
-      :scroll-top="scrollTop"
-      class="in-store-service__scroll-view"
-      :style="{ height: `calc(100vh - ${navHeight})` }"
-      @scroll="onScroll"
-      @scrolltolower="handleScrollToLower"
-    >
-      <!-- 金刚区，展示导航项 -->
-      <NavigationArea v-if="navigationList.length" :items="navigationList" />
-      <!-- 券码区，展示优惠券 -->
-      <CouponArea v-if="couponList.length" :list="couponList" />
-      <!-- 组件区，展示组件 -->
-      <ComponentArea v-if="componentList.length" :list="componentList" />
 
-      <!-- 资源区，展示资源 -->
-      <ResourceList v-if="resourceList.length" :list="resourceList" />
-
-      <!-- Feeds 组件 -->
-      <ProductFeeds
-        v-if="shopByCityList.length"
-        ref="productFeedsRef"
-        :location-info="locationInfo"
-      />
-
-      <!-- 回到顶部按钮，滚动到一定位置时显示 -->
-      <BackToTop v-show="showBackToTop" ref="backToTop" @click="scrollToTop">
-        <template #icon>
-          <u-icon name="arrow-upward" />
-          <!-- <view class="icon iconfont icon-BackTop" /> -->
-        </template>
-      </BackToTop>
-    </scroll-view>
-    <!-- 暂无数据提示，当前未启用 -->
-
+    <!-- 网络异常 -->
     <NoData
-      v-else-if="!shopByCityList.fetching && !shopByCityList.length"
+      v-if="isOffline"
       :style="{ height: `calc(100vh - ${navHeight})` }"
-      no-data-text="服务未上架"
+      no-data-text="网络不给力"
       :is-show-more="false"
       img="https://frontend-cdn.chongpangpang.com/image/medical-mp/chat/empty-sheet-tag.png"
     />
+
+    <!-- 内容区 -->
+    <view v-else>
+      <scroll-view
+        v-if="shopByCityList.fetched && shopByCityList.data.length"
+        scroll-y
+        :scroll-top="scrollTop"
+        class="in-store-service__scroll-view"
+        :style="{ height: `calc(100vh - ${navHeight})` }"
+        @scroll="onScroll"
+        @scrolltolower="handleScrollToLower"
+      >
+        <!-- 金刚区，展示导航项 -->
+        <NavigationArea v-if="navigationList.length" :list="navigationList" />
+        <!-- 券码区，展示优惠券 -->
+        <CouponArea v-if="couponList.length" :list="couponList" />
+        <!-- 组件区，展示组件 -->
+        <ComponentArea v-if="componentList.length" :list="componentList" />
+        <!-- 资源区，展示资源 -->
+        <ResourceList v-if="resourceList.length" :list="resourceList" />
+        <!-- Feeds 组件 -->
+        <ProductFeeds ref="productFeedsRef" :location-info="locationInfo" />
+
+        <!-- 回到顶部按钮，滚动到一定位置时显示 -->
+        <BackToTop v-show="showBackToTop" ref="backToTop" @click="scrollToTop">
+          <template #icon>
+            <u-icon name="arrow-upward" />
+            <!-- <view class="icon iconfont icon-BackTop" /> -->
+          </template>
+        </BackToTop>
+      </scroll-view>
+
+      <!-- 请求完成，且没有门店时展示 -->
+      <NoData
+        v-if="shopByCityList.fetched && !shopByCityList.data.length"
+        :style="{ height: `calc(100vh - ${navHeight})` }"
+        no-data-text="服务未上架"
+        :is-show-more="false"
+        img="https://frontend-cdn.chongpangpang.com/image/medical-mp/chat/empty-sheet-tag.png"
+      />
+    </view>
   </view>
 </template>
 
@@ -184,6 +210,8 @@ export default {
 
   data() {
     return {
+      // 是否在线
+      isOffline: false,
       // 导航栏高度
       navHeight: 0,
       // 滚动条位置
@@ -204,7 +232,7 @@ export default {
       navigationList: [],
       // 门店信息
       shopByCityList: {
-        fetching: false,
+        fetched: false,
         data: [],
       },
       // 定位相关逻辑
@@ -231,6 +259,10 @@ export default {
   },
 
   async onLoad(options) {
+    // 获取网络状态
+    this.checkNetworkStatus()
+    // 如果网络状态是离线，直接返回
+    if (this.isOffline) return
     // #ifdef MP-WEIXIN
     this.$dsBridge = mockAPP
     // #endif
@@ -249,7 +281,7 @@ export default {
     options.params = params
 
     // 如果页面是选择城市跳转逻辑
-    if (options.params) {
+    if (!options.params) {
       this.isFromSelectPositionCityPage = true
       // 不需要获取定位状态，状态由选择城市页面提供
       this.hasLocationPermission = {
@@ -280,7 +312,7 @@ export default {
 
   mounted() {
     // 获取导航栏高度
-    this.navHeight = this.$refs.navBarRef.navHeight
+    this.navHeight = this.$refs?.navBarRef?.navHeight
   },
 
   methods: {
@@ -305,6 +337,21 @@ export default {
         page: '/home/search?scene=5&keyword=',
       })
       // #endif
+    },
+    // 校验网络状态
+    checkNetworkStatus() {
+      uni.getNetworkType({
+        success: (res) => {
+          console.log(`当前网络类型: ${res.networkType}`)
+          if (res.networkType === 'none') {
+            uni.showToast({
+              title: '无网络连接，请检查网络设置',
+              icon: 'none',
+            })
+            this.isOffline = true
+          }
+        },
+      })
     },
     // 检查定位权限
     checkLocationPermission() {
@@ -342,7 +389,7 @@ export default {
         }
       )
     },
-    // 跳转定位APP权限设置
+    // 跳转定位APP权限设置逻辑
     // goToLocationPermissionSet () {
     //   // 跳转到 APP 定位权限设置页面
     //   this.$dsBridge.call(
@@ -373,7 +420,6 @@ export default {
     //     console.log('🚀 ~ afterLocationPermissionSet ~ error:', error)
     //   }
     // },
-    // TODO: 选择城市列表页面，uniapp 跳转，暂时用 Toast 代替
     goToSelectPositionCityPage() {
       uni.navigateTo({
         // url: '/pagesD/selectPositionCity/index',
@@ -437,14 +483,14 @@ export default {
     },
     // 获取城市门店数据
     async fetchShopByCityData() {
-      this.shopByCityList.fetching = true
+      this.shopByCityList.fetched = false
       const { cityCode } = this.locationInfo
       const resp = await fetchShopByCityAPI({
         cityCode: cityCode.slice(0, 4),
         bizType: 3,
       })
       console.log('🚀 ~ fetchShopByCityData ~ resp:', resp)
-      this.shopByCityList.fetching = false
+      this.shopByCityList.fetched = true
       this.shopByCityList.data = resp.data.data || []
       // 根据返回值处理门店信息
       if (this.shopByCityList.data.length === 0) {
@@ -466,7 +512,7 @@ export default {
 
       // 判断是否显示回到顶部按钮
       this.showBackToTop = scrollTop > 750
-      this.showBackToTop && this.$refs.backToTop.isScroll()
+      this.showBackToTop && this.$refs?.backToTop?.isScroll()
       // 记录滚动条位置
       this.oldScrollTop = scrollTop
 
