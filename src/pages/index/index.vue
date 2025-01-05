@@ -282,7 +282,7 @@ export default {
     options.params = params
 
     // 如果页面是选择城市跳转逻辑
-    if (!options.params) {
+    if (options.params) {
       this.isFromSelectPositionCityPage = true
       // 不需要获取定位状态，状态由选择城市页面提供
       this.hasLocationPermission = {

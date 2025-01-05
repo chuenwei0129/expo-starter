@@ -1,13 +1,14 @@
 <template>
   <view>
     <!-- 分类标签 -->
-    <view class="sticky-container" v-if="list.length">
+    <view v-if="list.length">
       <FilterTabs :list="tabList" @onSwitch="onSwitchTab" />
       <FilterOptions @filterChange="onFilterChange" />
     </view>
     <!-- 展示商品信息 -->
-    <view style="margin-top: 30rpx">
-      <ProductList v-if="products.length" :goods="formattedProducts" />
+    <view>
+      <ProductList v-show="products.length" :goods="formattedProducts" />
+      <view v-if="isFinished" class="last-container"> 已经到底啦喵～ </view>
       <NoData
         v-else-if="isFetched && !products.length"
         :is-show-more="false"
@@ -97,10 +98,6 @@ export default {
     },
     async fetchProductListData() {
       if (this.isFinished) {
-        uni.showToast({
-          title: '没有更多数据了',
-          icon: 'none',
-        })
         return
       }
       const { cityCode, lon: lng, lat } = this.locationInfo
@@ -122,8 +119,8 @@ export default {
       console.log('🚀 ~ fetchProductListData ~ resp:', resp)
       this.totalCount = Number(resp.data.data.totalCount)
       this.products = this.products.concat(resp.data.data.data || [])
-      if (this.totalCount < this.products.length) {
-        // 还有数据
+      if (this.totalCount > this.products.length) {
+        // 还有数据，继续分页请求
         this.params.pageNum++
       } else {
         this.isFinished = true
@@ -134,10 +131,10 @@ export default {
       if (this.params.categoryId === tabIndex) {
         return
       }
-      this.params.categoryId = tabIndex
-      this.params.pageNum = 1
-      this.products = []
       this.isFinished = false
+      this.products = []
+      this.params.pageNum = 1
+      this.params.categoryId = tabIndex
       this.fetchProductListData()
     },
     onFilterChange(filterType) {
@@ -153,10 +150,16 @@ export default {
 </script>
 
 <style scoped>
-.sticky-container {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background-color: #fff;
+.last-container {
+  width: 100%;
+  display: flex;
+  margin-top: 30rpx;
+  justify-content: center;
+  align-items: center;
+  font-weight: 400;
+  font-size: 23rpx;
+  color: #5a5a5a;
+  line-height: 33rpx;
+  padding-bottom: 40rpx;
 }
 </style>
