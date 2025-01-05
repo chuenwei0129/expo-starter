@@ -263,6 +263,7 @@ export default {
     this.checkNetworkStatus()
     // 如果网络状态是离线，直接返回
     if (this.isOffline) return
+
     // #ifdef MP-WEIXIN
     this.$dsBridge = mockAPP
     // #endif
@@ -307,18 +308,17 @@ export default {
 
   onShow() {
     // 获取购物车数量
-    this.$refs?.cartButtonRef?.getCartNum()
+    // this.$refs.cartButtonRef?.getCartNum()
   },
 
   mounted() {
     // 获取导航栏高度
-    this.navHeight = this.$refs?.navBarRef?.navHeight
+    this.navHeight = this.$refs.navBarRef.navHeight
   },
 
   methods: {
     handleScrollToLower() {
       console.log('🚀 ~ handleScrollToLower ~ handleScrollToLower')
-      this.$refs.productFeedsRef.params.pageNum++
       this.$refs.productFeedsRef.fetchProductListData()
     },
     // 返回上一页

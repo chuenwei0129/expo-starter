@@ -9,7 +9,7 @@
     <view style="margin-top: 30rpx">
       <ProductList v-if="products.length" :goods="formattedProducts" />
       <NoData
-        v-else-if="!isFetchingProducts && !products.length"
+        v-else-if="isFetched && !products.length"
         :is-show-more="false"
         img="https://frontend-cdn.chongpangpang.com/image/medical-mp/chat/empty-sheet-tag.png"
       />
@@ -45,7 +45,7 @@ export default {
     return {
       list: [],
       products: [], // 新增：商品列表数据
-      isFetchingProducts: false,
+      isFetched: false,
       params: {
         pageNum: 1,
         pageSize: 10,
@@ -55,6 +55,8 @@ export default {
         // 排序类型
         sortType: 1,
       },
+      totalCount: 0,
+      isFinished: false,
     }
   },
   computed: {
@@ -94,7 +96,15 @@ export default {
       this.list = resp.data.data.filter((item) => item.recommendType === 1)
     },
     async fetchProductListData() {
+      if (this.isFinished) {
+        uni.showToast({
+          title: '没有更多数据了',
+          icon: 'none',
+        })
+        return
+      }
       const { cityCode, lon: lng, lat } = this.locationInfo
+      this.isFetched = false
       const resp = await fetchProductListAPI({
         pageNum: this.params.pageNum,
         pageSize: 10,
@@ -108,11 +118,15 @@ export default {
         sortType: this.params.sortType,
         fromChannel: 'APP',
       })
+      this.isFetched = true
       console.log('🚀 ~ fetchProductListData ~ resp:', resp)
-      if (this.params.pageNum > 1) {
-        this.products = this.products.concat(resp.data.data.data || [])
+      this.totalCount = Number(resp.data.data.totalCount)
+      this.products = this.products.concat(resp.data.data.data || [])
+      if (this.totalCount < this.products.length) {
+        // 还有数据
+        this.params.pageNum++
       } else {
-        this.products = resp.data.data.data || []
+        this.isFinished = true
       }
     },
     onSwitchTab(tabIndex) {
@@ -122,12 +136,16 @@ export default {
       }
       this.params.categoryId = tabIndex
       this.params.pageNum = 1
+      this.products = []
+      this.isFinished = false
       this.fetchProductListData()
     },
     onFilterChange(filterType) {
       console.log('🚀 ~ onFilterChange ~ filterType:', filterType)
       this.params.sortType = filterType
       this.params.pageNum = 1 // 重置页码
+      this.products = []
+      this.isFinished = false
       this.fetchProductListData() // 重新获取数据
     },
   },
