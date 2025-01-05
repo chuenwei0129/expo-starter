@@ -1,15 +1,9 @@
 <template>
-  <view>
-    <Nav :items="list" :itemsPerRow="3" :rows="2" />
-  </view>
+  <view> </view>
 </template>
 
 <script>
-import Nav from './Navigation.vue'
 export default {
-  components: {
-    Nav,
-  },
   data() {
     return {
       list: [
