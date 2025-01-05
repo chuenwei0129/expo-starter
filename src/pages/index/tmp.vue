@@ -8,7 +8,7 @@
         /> -->
         <view class="search-bar__divider" />
         <text class="search-bar__text">
-          {{ currentKeyword || '搜你想要的宠物商品' }}
+          {{ currentHotWord || '搜你想要的宠物商品' }}
         </text>
       </view>
       <view class="search-bar__button">
@@ -24,55 +24,56 @@
 
 <script>
 // import ScanCode from '@/components/scanCode/index.vue'
-import { fetchHotWordAPI } from './api/mockAPI'
+import { GET_HOT_WORDS } from '@/api/index.js' // 假设这是你的 API 文件路径
 
 export default {
   name: 'SearchBar',
   // components: { ScanCode },
   data() {
     return {
-      hotKeywords: [], // 热词列表
-      currentKeyword: '', // 当前显示的热词
+      hotWords: [], // 热词列表
+      currentHotWord: '', // 当前显示的热词
       loopTimer: null, // 热词轮播定时器
-      rollTime: 5000, // 轮播时间间隔
     }
   },
   methods: {
     navigateToSearch() {
       // #ifdef MP-WEIXIN
       uni.navigateTo({
-        url: '/pagesC/searchGoods/index?keyword=' + this.currentKeyword,
+        url: '/pagesC/searchGoods/index?keyword=' + this.currentHotWord,
       })
       // #endif
       // #ifdef H5
       this.$dsBridge.call('gotoPageThroughRoute', {
-        page: '/home/search?scene=5&keyword=' + this.currentKeyword,
+        page: '/home/search?scene=5&keyword=' + this.currentHotWord,
       })
       // #endif
     },
     // 获取热词列表
-    async fetchHotWordData() {
-      const resp = await fetchHotWordAPI()
-      console.log('🚀 ~ fetchHotWordData ~ resp:', resp)
-      this.hotKeywords = resp.data.data.hotWords || []
-      this.rollTime = resp.data.data.rollTime * 1000
-      this.startKeywordRotation() // 获取到热词后开始轮播
+    async getHotWords() {
+      try {
+        const { data } = await GET_HOT_WORDS()
+        this.hotWords = data.data || []
+        this.startHotWordLoop() // 获取到热词后开始轮播
+      } catch (error) {
+        console.error('获取热词失败:', error)
+      }
     },
 
     // 开始热词轮播
-    startKeywordRotation() {
-      if (this.hotKeywords.length > 0) {
+    startHotWordLoop() {
+      if (this.hotWords.length > 0) {
         let currentIndex = 0
-        this.currentKeyword = this.hotKeywords[currentIndex] // 初始化显示第一个热词
+        this.currentHotWord = this.hotWords[currentIndex] // 初始化显示第一个热词
         this.loopTimer = setInterval(() => {
-          currentIndex = (currentIndex + 1) % this.hotKeywords.length
-          this.currentKeyword = this.hotKeywords[currentIndex]
-        }, this.rollTime) // 每 5 秒切换一次
+          currentIndex = (currentIndex + 1) % this.hotWords.length
+          this.currentHotWord = this.hotWords[currentIndex]
+        }, 5000) // 每 5 秒切换一次
       }
     },
   },
-  mounted() {
-    this.fetchHotWordData()
+  created() {
+    this.getHotWords()
   },
   beforeDestroy() {
     clearInterval(this.loopTimer)

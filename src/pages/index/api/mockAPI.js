@@ -154,3 +154,19 @@ export const fetchShopByCityAPI = () =>
     url: 'https://run.mocky.io/v3/9c20e0a5-88b1-49af-ba6e-0cc4e5605692',
     method: 'GET',
   })
+
+/**
+ * 获取热词搜索数据
+ * @param {Object} data - 请求参数对象
+ * @param {number} data.type - 必传，热词类型，14 表示热词搜索
+ * @returns {Promise} 返回一个 Promise 对象，包含请求的结果
+ * @example
+ * fetchHotWordAPI({
+ *   type: 14
+ * })
+ */
+export const fetchHotWordAPI = () =>
+  uni.request({
+    url: 'https://run.mocky.io/v3/8a0be7a8-6409-428a-9955-ccea3269e069',
+    method: 'GET',
+  })

@@ -199,3 +199,24 @@ export const fetchShopByCityAPI = (
     data,
     cqm: true,
   })
+
+/**
+ * 获取热词搜索数据
+ * @param {Object} data - 请求参数对象
+ * @param {number} data.type - 必传，热词类型，14 表示热词搜索
+ * @returns {Promise} 返回一个 Promise 对象，包含请求的结果
+ * @example
+ * fetchHotWordAPI({
+ *   type: 14
+ * })
+ */
+export const fetchHotWordAPI = (
+  data = {
+    type: 14, // 热词搜索
+  }
+) =>
+  request({
+    url: 'cpp-home/v2/hot/word',
+    method: 'POST',
+    data,
+  })

@@ -1,7 +1,7 @@
 <template>
   <view>
     <!-- 分类标签 -->
-    <view v-if="list.length">
+    <view v-if="list.length" class="sticky-container">
       <FilterTabs :list="tabList" @onSwitch="onSwitchTab" />
       <FilterOptions @filterChange="onFilterChange" />
     </view>
@@ -102,6 +102,7 @@ export default {
       }
       const { cityCode, lon: lng, lat } = this.locationInfo
       this.isFetched = false
+      uni.$emit('skeleton-refresh', true) // 关闭骨架屏
       const resp = await fetchProductListAPI({
         pageNum: this.params.pageNum,
         pageSize: 10,
@@ -116,6 +117,11 @@ export default {
         fromChannel: 'APP',
       })
       this.isFetched = true
+      uni.$emit('skeleton-refresh', false) // 关闭骨架屏
+      // 如果是第一页，清空数组
+      // if (this.params.pageNum === 1) {
+      //   this.products = []
+      // }
       console.log('🚀 ~ fetchProductListData ~ resp:', resp)
       this.totalCount = Number(resp.data.data.totalCount)
       this.products = this.products.concat(resp.data.data.data || [])
@@ -132,17 +138,17 @@ export default {
         return
       }
       this.isFinished = false
-      this.products = []
       this.params.pageNum = 1
       this.params.categoryId = tabIndex
+      this.products = []
       this.fetchProductListData()
     },
     onFilterChange(filterType) {
       console.log('🚀 ~ onFilterChange ~ filterType:', filterType)
       this.params.sortType = filterType
       this.params.pageNum = 1 // 重置页码
-      this.products = []
       this.isFinished = false
+      this.products = []
       this.fetchProductListData() // 重新获取数据
     },
   },
@@ -161,5 +167,12 @@ export default {
   color: #5a5a5a;
   line-height: 33rpx;
   padding-bottom: 40rpx;
+}
+.sticky-container {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background-color: #fff;
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
 }
 </style>

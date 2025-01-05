@@ -70,7 +70,7 @@ export default {
   props: {
     useSkeleton: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     goods: {
       type: Array,
