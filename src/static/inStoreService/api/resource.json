@@ -1,0 +1,177 @@
+{
+  "code": 0,
+  "message": "成功",
+  "data": {
+    "resourceList": [
+      {
+        "id": "1983575482605498568",
+        "name": "数码家电",
+        "resList": [
+          {
+            "skuld": "1983575482605498569",
+            "itemId": "1983575482605498570",
+            "itemName": "智能手机 X",
+            "image": "https://picsum.photos/200/300?random=1",
+            "skuName": "旗舰版-黑色-12GB+256GB",
+            "salePoint": "超长续航，超清摄像",
+            "realPrice": 4999.99,
+            "salePrice": 4599.0,
+            "promotionPrice": 4499.0,
+            "shopName": "未来科技旗舰店",
+            "distance": "1.2km",
+            "saledStockQty": 1000,
+            "promotionTag": {
+              "discountAmount": 100.0,
+              "promotionId": "1983575482605498571",
+              "promotionName": "开业大酬宾",
+              "promotionType": 2,
+              "rightType": 101,
+              "promotionRule": {
+                "mostAmount": "",
+                "amount": 500,
+                "discount": 0.9,
+                "isMutex": false,
+                "threshold": 4000,
+                "couponTypeInquiry": ""
+              }
+            }
+          },
+          {
+            "skuld": "1983575482605498572",
+            "itemId": "1983575482605498573",
+            "itemName": "无线降噪耳机",
+            "image": "https://picsum.photos/200/300?random=2",
+            "skuName": "Pro 版-白色",
+            "salePoint": "沉浸式音质体验",
+            "realPrice": 1299.0,
+            "salePrice": 1099.0,
+            "promotionPrice": 999.0,
+            "shopName": "未来科技旗舰店",
+            "distance": "1.2km",
+            "saledStockQty": 2000,
+            "promotionTag": {
+              "discountAmount": 100.0,
+              "promotionId": "1983575482605498574",
+              "promotionName": "满减优惠",
+              "promotionType": 1,
+              "rightType": 211,
+              "promotionRule": {
+                "mostAmount": "",
+                "amount": 200,
+                "discount": 0,
+                "isMutex": true,
+                "threshold": 1000,
+                "couponTypeInquiry": ""
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "1983575482605498575",
+        "name": "家居生活",
+        "resList": null
+      },
+      {
+        "id": "1983575482605498576",
+        "name": "服装",
+        "resList": [
+          {
+            "skuld": "1983575482605498577",
+            "itemId": "1983575482605498578",
+            "itemName": "夏季新款T恤",
+            "image": "https://picsum.photos/200/300?random=3",
+            "skuName": "男款-白色-L",
+            "salePoint": "舒适透气，时尚百搭",
+            "realPrice": 199.0,
+            "salePrice": 159.0,
+            "promotionPrice": 149.0,
+            "shopName": "潮流服饰店",
+            "distance": "0.8km",
+            "saledStockQty": 500,
+            "promotionTag": {
+              "discountAmount": 10.0,
+              "promotionId": "1983575482605498579",
+              "promotionName": "夏日特惠",
+              "promotionType": 2,
+              "rightType": 101,
+              "promotionRule": {
+                "mostAmount": "",
+                "amount": 50,
+                "discount": 0.95,
+                "isMutex": false,
+                "threshold": 100,
+                "couponTypeInquiry": ""
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "1983575482605498580",
+        "name": "食品",
+        "resList": [
+          {
+            "skuld": "1983575482605498581",
+            "itemId": "1983575482605498582",
+            "itemName": "进口牛奶",
+            "image": "https://picsum.photos/200/300?random=4",
+            "skuName": "全脂-1L",
+            "salePoint": "营养丰富，口感顺滑",
+            "realPrice": 29.9,
+            "salePrice": 25.9,
+            "promotionPrice": 23.9,
+            "shopName": "全球美食超市",
+            "distance": "2.5km",
+            "saledStockQty": 800,
+            "promotionTag": {
+              "discountAmount": 2.0,
+              "promotionId": "1983575482605498583",
+              "promotionName": "限时折扣",
+              "promotionType": 1,
+              "rightType": 211,
+              "promotionRule": {
+                "mostAmount": "",
+                "amount": 6,
+                "discount": 0,
+                "isMutex": true,
+                "threshold": 20,
+                "couponTypeInquiry": ""
+              }
+            }
+          },
+          {
+            "skuld": "1983575482605498584",
+            "itemId": "1983575482605498585",
+            "itemName": "新鲜水果拼盘",
+            "image": "https://picsum.photos/200/300?random=5",
+            "skuName": "大份-500g",
+            "salePoint": "多种水果，新鲜美味",
+            "realPrice": 49.9,
+            "salePrice": 39.9,
+            "promotionPrice": 39.9,
+            "shopName": "全球美食超市",
+            "distance": "2.5km",
+            "saledStockQty": 300,
+            "promotionTag": null
+          },
+          {
+            "skuld": "1983575482605498586",
+            "itemId": "1983575482605498587",
+            "itemName": "有机蔬菜套餐",
+            "image": "https://picsum.photos/200/300?random=6",
+            "skuName": "家庭装-3kg",
+            "salePoint": "绿色健康，无农药残留",
+            "realPrice": 89.9,
+            "salePrice": 79.9,
+            "promotionPrice": 79.9,
+            "shopName": "全球美食超市",
+            "distance": "2.5km",
+            "saledStockQty": 200,
+            "promotionTag": null
+          }
+        ]
+      }
+    ]
+  }
+}
