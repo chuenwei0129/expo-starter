@@ -1,8 +1,6 @@
 <template>
   <view class="coupon-card">
-    <view class="coupon-card__image">
-      <image :src="coupon.imageUrl" />
-    </view>
+    <image class="coupon-card__image" :src="coupon.imageUrl" />
 
     <view class="coupon-card__info">
       <view class="coupon-card__title">
@@ -16,11 +14,9 @@
           还剩 <span class="days-remaining">{{ coupon.daysRemaining }}</span> 天
         </template>
         <template v-else-if="Number(coupon.daysRemaining) === 0">
-          <span class="expired">{{ coupon.verifyValidEndTime.split(' ')[1] }} 后失效</span>
+          <span class="expired">{{ countdown }}</span>
         </template>
-        <template v-else>
-          异常情况
-        </template>
+        <template v-else> 异常情况 </template>
       </view>
       <view class="coupon-card__location">
         <u-text
@@ -35,10 +31,7 @@
       </view>
     </view>
 
-    <view
-      class="coupon-card__action"
-      @click="$emit('click', coupon)"
-    >
+    <view class="coupon-card__action" @click="$emit('click', coupon)">
       查看券码
     </view>
   </view>
@@ -54,10 +47,49 @@ export default {
     },
   },
   emits: ['click'],
+  data() {
+    return {
+      countdown: '', // 倒计时显示
+      interval: null, // 定时器
+    }
+  },
+  mounted() {
+    if (Number(this.coupon.daysRemaining) === 0) {
+      this.startCountdown()
+    }
+  },
+  beforeDestroy() {
+    if (this.interval) {
+      clearInterval(this.interval)
+    }
+  },
   methods: {
-    formatDate (dateString) {
-      const date = new Date(dateString)
+    formatDate(dateString) {
+      const date = new Date(dateString.replace(/-/g, '/'))
       return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`
+    },
+    startCountdown() {
+      const endTime = new Date(
+        this.coupon.verifyValidEndTime.replace(/-/g, '/')
+      ).getTime()
+      this.interval = setInterval(() => {
+        const now = new Date().getTime()
+        const timeLeft = endTime - now
+
+        if (timeLeft <= 0) {
+          clearInterval(this.interval)
+          this.countdown = '已失效'
+          return
+        }
+
+        const hours = Math.floor(
+          (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        )
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000)
+
+        this.countdown = `${hours}:${minutes}:${seconds} 后失效`
+      }, 1000)
     },
   },
 }

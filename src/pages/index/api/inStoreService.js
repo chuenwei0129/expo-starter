@@ -89,13 +89,13 @@ export const fetchComponentListAPI = (
  * @returns {Promise} 返回一个 Promise 对象，包含请求的结果
  * @example
  * fetchNavigationAPI({
- *   displayChannel: 'APP_MP',
+ *   displayChannel: 'APP',
  *   bizType: 2
  * })
  */
 export const fetchNavigationAPI = (
   data = {
-    displayChannel: 'APP_MP',
+    displayChannel: 'APP',
     bizType: 2,
   }
 ) =>
@@ -220,3 +220,32 @@ export const fetchHotWordAPI = (
     method: 'POST',
     data,
   })
+
+/**
+ * 获取到店服务城市列表
+ * @param {Object} data - 请求参数对象
+ * @param {number} data.bizType - 必传，业务类型，3：到店服务
+ * @param {number} data.lng - 必传，经度
+ * @param {number} data.lat - 必传，纬度
+ * @returns {Promise} 返回一个 Promise 对象，包含请求的结果
+ * @example
+ * fetchHasShopCityList({
+ *   bizType: 3,
+ *   lng: 121.45712,
+ *   lat: 31.229234,
+ * })
+ */
+export const fetchHasShopCityListAPI = (
+  data = {
+    bizType: 3, // 业务类型，3：到店服务
+    lng: 121.45712,
+    lat: 31.229234,
+  }
+) => {
+  return request({
+    url: `presentation/customer/applet/shop/hasShopCityList`,
+    method: 'POST',
+    data,
+    cqm: true,
+  })
+}

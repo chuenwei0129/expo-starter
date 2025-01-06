@@ -3,7 +3,7 @@
   "message": "success",
   "data": [
     {
-      "daysRemaining": "2",
+      "daysRemaining": "0",
       "id": "1873932501362917380",
       "imageUrl": "https://picsum.photos/200",
       "itemName": "宠美二体X",
@@ -12,10 +12,10 @@
       "status": 5,
       "statusName": "已完成",
       "verifyCode": "9999109420222",
-      "verifyValidEndTime": "2025-01-04 11:21:58"
+      "verifyValidEndTime": "2025-01-07 11:21:58"
     },
     {
-      "daysRemaining": "1",
+      "daysRemaining": "0",
       "id": "1873932501362917381",
       "imageUrl": "https://picsum.photos/201",
       "itemName": "宠美二体Y",
@@ -24,7 +24,7 @@
       "status": 5,
       "statusName": "已完成",
       "verifyCode": "9999109420333",
-      "verifyValidEndTime": "2025-01-04 12:21:58"
+      "verifyValidEndTime": "2025-01-06 22:21:58"
     },
     {
       "daysRemaining": "7",

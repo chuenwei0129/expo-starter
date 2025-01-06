@@ -51,7 +51,7 @@ export const fetchResourceAPI = () =>
  */
 export const fetchCouponListAPI = () =>
   uni.request({
-    url: 'https://run.mocky.io/v3/6277dede-f7a0-481c-93f4-37c1fef64f38',
+    url: 'https://run.mocky.io/v3/2b5348e2-717c-465b-8e5a-c97e71b6d60f',
     method: 'GET',
   })
 
@@ -168,5 +168,25 @@ export const fetchShopByCityAPI = () =>
 export const fetchHotWordAPI = () =>
   uni.request({
     url: 'https://run.mocky.io/v3/8a0be7a8-6409-428a-9955-ccea3269e069',
+    method: 'GET',
+  })
+
+/**
+ * 获取到店服务城市列表
+ * @param {Object} data - 请求参数对象
+ * @param {number} data.bizType - 必传，业务类型，3：到店服务
+ * @param {number} data.lng - 必传，经度
+ * @param {number} data.lat - 必传，纬度
+ * @returns {Promise} 返回一个 Promise 对象，包含请求的结果
+ * @example
+ * fetchHasShopCityList({
+ *   bizType: 3,
+ *   lng: 121.45712,
+ *   lat: 31.229234,
+ * })
+ */
+export const fetchHasShopCityListAPI = () =>
+  uni.request({
+    url: `https://run.mocky.io/v3/cfa99c3b-5283-48af-bbd7-d5a7512b5824`,
     method: 'GET',
   })

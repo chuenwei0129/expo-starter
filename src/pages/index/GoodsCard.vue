@@ -49,6 +49,7 @@
         paddingRight: needMargin ? '17rpx' : '0',
       }"
     >
+      <!-- <view class="tag-item-prepare" v-if="hasPrepare">养宠必备</view> -->
       <!-- <view v-if="hasDeliverTag" class="tag-item" style="flex-shrink: 0">
         <DeliveryTag :text-size="21" />
       </view> -->
@@ -87,6 +88,12 @@
         :sale-price-integer-font-size="38"
         show-discounts
       />
+      <!-- <image
+        v-if="canAddCart"
+        class="add-cart-icon"
+        src="https://frontend-cdn.chongpangpang.com/image/medical-mp/goods/shop-cart-logo-active1.png"
+        @click.stop="handleAddCart"
+      /> -->
       <view v-if="canAddCart" class="add-cart-icon" @click.stop="handleAddCart">
         <i class="iconfont icon-a-ShoppingCart" />
       </view>
@@ -98,15 +105,19 @@
 </template>
 
 <script>
-import GoodsPrice from '../../components/goodsPrice/index.vue'
-import PromotionTag from './PromotionTag.vue'
 // import GoodsPrice from '@/components/goodsPrice/index.vue'
 // import { display_report } from '@/utils/track'
 // import DeliveryTag from '@/components/goodsCard/components/deliveryTag.vue'
 // import { addCart } from '@/api/cart'
 // import PromotionTag from '@/components/goodsCard/components/promotionTag.vue'
+
+import GoodsPrice from '../../components/goodsPrice/index.vue'
+// import { display_report } from '@/utils/track'
+// import DeliveryTag from '@/components/goodsCard/components/deliveryTag.vue'
+// import { addCart } from '@/api/cart'
+import PromotionTag from './PromotionTag.vue'
 export default {
-  name: 'InStoreServiceGoodsCard',
+  name: 'GoodsCard',
   components: {
     PromotionTag,
     // DeliveryTag,

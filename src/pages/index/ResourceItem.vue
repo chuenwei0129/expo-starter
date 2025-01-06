@@ -47,20 +47,25 @@ export default {
       type: Object,
       required: true,
     },
+    location: {
+      type: Object,
+      required: true,
+    },
   },
   computed: {
-    filterList() {
+    filterList () {
       return this.resource.resList.slice(0, 3)
     },
   },
   methods: {
-    handleViewMore() {
+    handleViewMore () {
       console.log('🚀 ~ handleViewMore ~ item:', this.resource)
+      console.log(this.$props.location)
       uni.navigateTo({
-        url: `/pagesB/takeBathPage/index?resource=${this.resource.id}}`,
+        url: `/pagesB/takeBathPage/index?resource=${this.resource.id}&cityCode=${this.location.cityCode}&lng=${this.location.lon}&lat=${this.location.lat}`,
       })
     },
-    handleClickProduct(item) {
+    handleClickProduct (item) {
       console.log('🚀 ~ handleClickProduct ~ item:', item)
       // TODO: 跳转到商品详情页面
       uni.$u.debounce(() => {

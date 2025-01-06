@@ -30,27 +30,27 @@ export default {
     },
   },
   emits: ['onSwitch'],
-  data() {
+  data () {
     return {
       tabIndex: 0,
       tabWidth: 28,
     }
   },
-  created() {
+  created () {
     uni.loadFontFace({
       family: 'AlimamaShuHeiTi-Bold',
       source:
         'url("https://frontend-cdn.chongpangpang.com/image/medical-mp/mall/AlimamaShuHeiTi-Bold.otf")',
-      success() {
+      success () {
         console.log('success load ttf')
       },
-      fail() {
+      fail () {
         console.log('fail load ttf')
       },
     })
   },
   methods: {
-    handleClickTab(item) {
+    handleClickTab (item) {
       const { rect } = item
       if (rect) {
         this.tabWidth = rect.width - 24 > 28 ? rect.width - 24 : 28

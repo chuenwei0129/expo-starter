@@ -7,7 +7,7 @@
     </view>
     <!-- 展示商品信息 -->
     <view>
-      <ProductList v-show="products.length" :goods="formattedProducts" />
+      <ProductList v-if="products.length" :goods="formattedProducts" />
       <view v-if="isFinished" class="last-container"> 已经到底啦喵～ </view>
       <NoData
         v-else-if="isFetched && !products.length"
@@ -22,8 +22,7 @@
 import FilterTabs from './FilterTabs.vue'
 import FilterOptions from './FilterOptions.vue'
 import ProductList from './ProductList.vue'
-// import NoData from '@/components/noData/index.vue'
-import NoData from '../../components/noData/index.vue'
+import NoData from '@/components/noData/index.vue'
 
 import { fetchRecommendClassifyAPI, fetchProductListAPI } from './api/mockAPI'
 // import { fetchRecommendClassifyAPI, fetchProductListAPI } from './api/inStoreService'
@@ -165,6 +164,7 @@ export default {
   line-height: 33rpx;
   padding-bottom: 40rpx;
 }
+
 .sticky-container {
   position: sticky;
   top: 0;

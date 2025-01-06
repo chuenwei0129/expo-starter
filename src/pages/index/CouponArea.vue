@@ -2,7 +2,9 @@
   <view class="coupon-area">
     <!-- 标题和查看更多按钮 -->
     <view class="coupon-area__header">
-      <view class="coupon-area__title"> 待使用 </view>
+      <view class="coupon-area__title">
+        待使用
+      </view>
       <view>
         <u-text
           v-if="list.length > 5"
@@ -19,14 +21,19 @@
     <swiper
       class="coupon-area__swiper"
       :indicator-dots="list.length > 1"
-      :autoplay="true"
       :interval="3000"
       :circular="true"
       :current="current"
       @change="onSwiperChange"
     >
-      <swiper-item v-for="(item, index) in list" :key="index">
-        <CouponCard :coupon="item" @click="handleClick" />
+      <swiper-item
+        v-for="(item, index) in list"
+        :key="index"
+      >
+        <CouponCard
+          :coupon="item"
+          @click="handleClick"
+        />
       </swiper-item>
     </swiper>
   </view>
@@ -46,27 +53,24 @@ export default {
       required: true,
     },
   },
-  data() {
+  data () {
     return {
       current: 0,
     }
   },
 
   methods: {
-    handleClick(coupon) {
-      // TODO: 跳转 APP
-      uni.showToast({
-        title: `查看券码: ${coupon.id}`,
-        icon: 'success',
+    handleClick (coupon) {
+      this.$dsBridge.call('gotoPageThroughRoute', {
+        page: `${window.location.origin}/crm-medical-h5/#/pagesC/orderDetail/serviceOrderDetail/index?orderId=${coupon.id}&transparentTopBar=1`,
       })
     },
-    handleViewMore() {
-      uni.showToast({
-        title: 'TODO 跳转',
-        icon: 'none',
+    handleViewMore () {
+      uni.navigateTo({
+        url: 'pagesC/mallOrderList/index?listIndex=4',
       })
     },
-    onSwiperChange(event) {
+    onSwiperChange (event) {
       this.current = event.detail.current
     },
   },
@@ -80,7 +84,7 @@ export default {
   width: 719rpx;
   height: 250rpx;
   margin: 0 auto;
-  margin-bottom: 40rpx;
+  margin-bottom: 60rpx;
 }
 
 /* 标题区域样式 */

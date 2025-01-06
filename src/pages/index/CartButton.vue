@@ -6,8 +6,10 @@
         name="more-dot-fill"
         color="#fff"
         size="12"
-      ></u-icon>
-      <text v-else>{{ cartItemCount }}</text>
+      />
+      <text v-else>
+        {{ cartItemCount }}
+      </text>
     </view>
 
     <i class="iconfont icon-a-ShoppingCart" style="font-size: 46rpx" />
@@ -22,6 +24,10 @@ export default {
     return {
       cartItemCount: 0,
     }
+  },
+
+  mounted() {
+    this.getCartNum()
   },
 
   methods: {

@@ -17,7 +17,7 @@
       <!-- 商品名 -->
       <view class="product-card__name">
         <text>
-          {{ product.itemName }}
+          {{ product.name }}
         </text>
       </view>
       <!-- 营销信息 -->
@@ -82,6 +82,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+// @import '@/utils/fn.scss';
 .product-card {
   border-radius: 23rpx;
   display: flex;
@@ -114,6 +115,10 @@ export default {
       height: 208rpx;
       border-radius: 23rpx;
     }
+
+    product-card__info {
+      // @include ellipsis(208rpx);
+    }
   }
 
   &__image {
@@ -124,6 +129,7 @@ export default {
 
   &__info {
     padding: 20rpx;
+    // @include ellipsis(352rpx);
   }
 
   &__name {
@@ -132,6 +138,7 @@ export default {
     color: #333333;
     line-height: 38rpx;
     text-align: left;
+    // @include ellipsis(352rpx);
   }
 
   &__promotion {

@@ -16,13 +16,21 @@
           class="navigation-area__swiper-item-content"
           :style="{ width: itemWidthPercentage + '%' }"
         >
-          <view @click="handleNavigationClick(item)">
+          <view
+            style="position: relative"
+            @click="handleNavigationClick(item)"
+          >
             <u-image
               :src="item.image"
               mode="aspectFill"
               width="85rpx"
               height="85rpx"
               radius="10rpx"
+            />
+            <image
+              v-if="item.cornerIcon"
+              style="position: absolute;width: 42rpx;height: 25rpx;top: -8rpx;left: 52rpx;"
+              :src="item.cornerIcon"
             />
           </view>
           <view class="navigation-area__swiper-item-name">
@@ -60,7 +68,7 @@ export default {
     },
   },
 
-  data() {
+  data () {
     return {
       // 分页后的导航项数组
       paginatedItems: [],
@@ -69,12 +77,12 @@ export default {
 
   computed: {
     // 计算每个导航项的宽度百分比
-    itemWidthPercentage() {
+    itemWidthPercentage () {
       return 100 / this.itemsPerRow
     },
     // 计算轮播组件的高度
     // TODO: 指定轮播组件的高度在有 dot 时会导致 item 上下间距变宽，需要优化
-    swiperHeight() {
+    swiperHeight () {
       // 基础高度：一行的高度为 85rpx (图片高度) + 16rpx * 2 (上下边距) + 8rpx (文字上边距) + 24rpx(文字高度) = 157rpx
       const baseItemHeight = 85 + 16 + 16 + 8 + 24
       let height = 0
@@ -93,7 +101,7 @@ export default {
       return `${height}rpx`
     },
     // 是否显示分页指示点
-    showPaginationDots() {
+    showPaginationDots () {
       return this.paginatedItems.length > 1
     },
   },
@@ -114,7 +122,7 @@ export default {
 
   methods: {
     // 对导航项数据进行分页
-    paginateItems() {
+    paginateItems () {
       // 计算每页的导航项数量
       const itemsPerPage = this.itemsPerRow * this.rowsPerPage
       // 最多显示 30 个
@@ -131,9 +139,17 @@ export default {
     },
 
     // 处理导航项点击事件
-    handleNavigationClick(item) {
-      this.$dsBridge.call('gotoPageThroughRoute', {
+    handleNavigationClick (item) {
+      // 检查 appLink 是否以https开头，如果是直接跳转如果不是按下面注释规则跳转
+      if (item.appLink.startsWith('https')) {
+        this.$dsBridge.call('gotoPageThroughRoute', {
         page: `${item.appLink}`,
+      })
+        return
+      }
+
+      this.$dsBridge.call('gotoPageThroughRoute', {
+        page: `${window.location.origin}/crm-medical-h5/#/${item.appLink}`
       })
     },
   },

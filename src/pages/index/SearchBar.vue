@@ -2,13 +2,10 @@
   <view class="search-bar" @click="$u.debounce(navigateToSearch, 500)">
     <view class="search-bar__input">
       <view class="search-bar__placeholder">
-        <!-- <scan-code
-          color="red"
-          @click="gotoScan"
-        /> -->
+        <!-- <scan-code color="red" /> -->
         <view class="search-bar__divider" />
         <text class="search-bar__text">
-          {{ currentKeyword || '搜你想要的宠物商品' }}
+          {{ currentKeyword || '搜你想要的到店服务名称' }}
         </text>
       </view>
       <view class="search-bar__button">
@@ -25,6 +22,7 @@
 <script>
 // import ScanCode from '@/components/scanCode/index.vue'
 import { fetchHotWordAPI } from './api/mockAPI'
+// import {fetchHotWordAPI} from './api/inStoreService'
 
 export default {
   name: 'SearchBar',
@@ -36,6 +34,13 @@ export default {
       loopTimer: null, // 热词轮播定时器
       rollTime: 5000, // 轮播时间间隔
     }
+  },
+  mounted() {
+    this.fetchHotWordData()
+  },
+  beforeDestroy() {
+    clearInterval(this.loopTimer)
+    this.loopTimer = null
   },
   methods: {
     navigateToSearch() {
@@ -54,8 +59,8 @@ export default {
     async fetchHotWordData() {
       const resp = await fetchHotWordAPI()
       console.log('🚀 ~ fetchHotWordData ~ resp:', resp)
-      this.hotKeywords = resp.data.data.hotWords || []
-      this.rollTime = resp.data.data.rollTime * 1000
+      this.hotKeywords = resp.data.hotWords || []
+      this.rollTime = resp.data.rollTime * 1000
       this.startKeywordRotation() // 获取到热词后开始轮播
     },
 
@@ -70,13 +75,6 @@ export default {
         }, this.rollTime) // 每 5 秒切换一次
       }
     },
-  },
-  mounted() {
-    this.fetchHotWordData()
-  },
-  beforeDestroy() {
-    clearInterval(this.loopTimer)
-    this.loopTimer = null
   },
 }
 </script>

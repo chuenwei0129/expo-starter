@@ -17,20 +17,30 @@
       <view
         v-else-if="
           showSkeleton &&
-          evenGoods.length == 0 &&
-          oddGoods.length == 0 &&
-          useSkeleton
+            evenGoods.length == 0 &&
+            oddGoods.length == 0 &&
+            useSkeleton
         "
         class="skeleton-evengoods paddingRight test2"
       >
-        <view v-for="i in 2" :key="i" class="skeleton-item">
-          <image class="icon" :src="skeletonIcon" />
+        <view
+          v-for="i in 2"
+          :key="i"
+          class="skeleton-item"
+        >
+          <image
+            class="icon"
+            :src="skeletonIcon"
+          />
         </view>
       </view>
     </view>
 
     <!-- 偶数 -->
-    <view v-if="oddGoods && oddGoods.length > 0" class="odd-goods-list">
+    <view
+      v-if="oddGoods && oddGoods.length > 0"
+      class="odd-goods-list"
+    >
       <GoodsCard
         v-for="goodsItem in oddGoods"
         :key="goodsItem.id"
@@ -46,14 +56,21 @@
     <view
       v-else-if="
         showSkeleton &&
-        oddGoods.length == 0 &&
-        evenGoods.length == 0 &&
-        useSkeleton
+          oddGoods.length == 0 &&
+          evenGoods.length == 0 &&
+          useSkeleton
       "
       class="skeleton-evengoods paddingLeft"
     >
-      <view v-for="i in 2" :key="i" class="skeleton-item">
-        <image class="icon" :src="skeletonIcon" />
+      <view
+        v-for="i in 2"
+        :key="i"
+        class="skeleton-item"
+      >
+        <image
+          class="icon"
+          :src="skeletonIcon"
+        />
       </view>
     </view>
   </view>
@@ -91,7 +108,7 @@ export default {
       default: () => [],
     },
   },
-  data() {
+  data () {
     return {
       // 骨架屏icon
       skeletonIcon:
@@ -100,14 +117,14 @@ export default {
     }
   },
   computed: {
-    oddGoods() {
+    oddGoods () {
       if (this.adItems.length > 0) {
         return this.goods.filter((_, index) => index % 2 === 0)
       } else {
         return this.goods.filter((_, index) => index % 2 !== 0)
       }
     },
-    evenGoods() {
+    evenGoods () {
       if (this.adItems.length > 0) {
         return this.goods.filter((_, index) => index % 2 !== 0)
       } else {
@@ -115,7 +132,7 @@ export default {
       }
     },
   },
-  mounted() {
+  mounted () {
     uni.$on('skeleton-refresh', (bool) => {
       setTimeout(() => {
         this.showSkeleton = bool
@@ -123,7 +140,7 @@ export default {
     })
   },
   methods: {
-    handleClickGoods(goods) {
+    handleClickGoods (goods) {
       uni.$u.debounce(() => {
         uni.navigateTo({
           url: `/pagesC/goodsServiceDetail/index?itemId=${goods.id}&skuId=${

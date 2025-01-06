@@ -24,8 +24,8 @@ const mockAPP = {
       checkLocationPermission: () => {
         // 模拟定位权限检查，随机返回 true 或 false
         setTimeout(() => {
-          // const hasPermission = Math.random() > 0.5 ? 1 : 0 // 50% 的概率返回 true 或 false
-          const hasPermission = 1
+          const hasPermission = Math.random() > 0.5 ? 1 : 0 // 50% 的概率返回 true 或 false
+          // const hasPermission = 1
           console.log(`定位权限: ${hasPermission ? '已授权' : '未授权'}`)
           if (callback) callback(JSON.stringify(hasPermission))
         }, 500)
@@ -38,7 +38,7 @@ const mockAPP = {
           // 模拟用户开启权限后回调
           this.invokeRegisteredCallback(
             'locationCallback',
-            JSON.stringify(this.locationData)
+            this.locationData
           )
         }, 3000)
       },

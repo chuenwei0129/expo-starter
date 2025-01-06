@@ -4,7 +4,9 @@
     :class="{ 'back-to-top--full-show': type === 1 }"
     @click="$emit('click')"
   >
-    <slot name="icon"> ▲ </slot>
+    <slot name="icon">
+      ▲
+    </slot>
   </view>
 </template>
 
@@ -17,7 +19,7 @@ export default {
       default: 1000,
     },
   },
-  data() {
+  data () {
     return {
       // 1|0.5|0 完全显示|半显示|不显示
       type: 1,
@@ -26,7 +28,7 @@ export default {
     }
   },
   methods: {
-    isScroll() {
+    isScroll () {
       // 如果页面正在滚动，则半显示
       if (this.type === 1) {
         this.type = 0.5

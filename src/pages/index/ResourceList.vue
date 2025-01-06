@@ -6,6 +6,7 @@
     >
       <ResourceItem
         :resource="item"
+        :location="location"
       />
     </view>
   </view>
@@ -24,6 +25,11 @@ export default {
       type: Array,
       required: true,
     },
+    location: {
+      type: Object,
+      required: true,
+    },
+
   },
   computed: {
     // 商品数量 = 0 则不展示该区域: 过滤掉商品数量为 0 的列表项

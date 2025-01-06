@@ -47,7 +47,9 @@
           )
         "
       >
-        <view class="filter-options__label"> 价格 </view>
+        <view class="filter-options__label">
+          价格
+        </view>
         <view :class="priceIconCssClass" />
       </view>
     </view>
@@ -58,7 +60,7 @@
 export default {
   name: 'FilterOptions',
   emits: ['filterChange'],
-  data() {
+  data () {
     return {
       currentFilter: 1, // 当前选中的筛选类型
       filterTypes: {
@@ -71,16 +73,16 @@ export default {
     }
   },
   computed: {
-    currentPriceType() {
+    currentPriceType () {
       return this.currentFilter
     },
-    isPriceFilterActive() {
+    isPriceFilterActive () {
       return (
         this.currentFilter === this.filterTypes.PRICE_ASC ||
         this.currentFilter === this.filterTypes.PRICE_DESC
       )
     },
-    priceIconCssClass() {
+    priceIconCssClass () {
       if (this.currentFilter === this.filterTypes.PRICE_ASC) {
         return 'filter-options__price-icon filter-options__price-icon--asc'
       } else if (this.currentFilter === this.filterTypes.PRICE_DESC) {
@@ -90,10 +92,10 @@ export default {
     },
   },
   methods: {
-    isFilterSelected(filterType) {
+    isFilterSelected (filterType) {
       return this.currentFilter === filterType
     },
-    onSelectFilter(filterType) {
+    onSelectFilter (filterType) {
       if (this.currentFilter === filterType) return
       this.currentFilter = filterType
       this.$emit('filterChange', this.currentFilter)
