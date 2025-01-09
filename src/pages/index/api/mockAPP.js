@@ -15,43 +15,35 @@ const mockAPP = {
     countyCode: '110108',
     county: '海淀区',
   },
+  // 模拟定位权限 0 未授权 1 已授权
+  permission: 0,
 
   // 模拟 $dsBridge.call
-  call (method, args, callback) {
+  call(method, args, callback) {
     console.log(`调用方法: ${method}, 参数: ${args}`)
 
     const methodHandlers = {
       checkLocationPermission: () => {
-        // 模拟定位权限检查，随机返回 true 或 false
         setTimeout(() => {
-          const hasPermission = Math.random() > 0.5 ? 1 : 0 // 50% 的概率返回 true 或 false
-          // const hasPermission = 1
-          console.log(`定位权限: ${hasPermission ? '已授权' : '未授权'}`)
-          if (callback) callback(JSON.stringify(hasPermission))
-        }, 500)
+          console.log(`定位权限: ${this.permission ? '已授权' : '未授权'}`)
+          if (callback) callback(JSON.stringify(this.permission))
+        }, 100)
       },
 
       gotoLocationPermissionSet: () => {
         // 模拟跳转定位权限设置
         setTimeout(() => {
           console.log('模拟跳转到定位权限设置...')
-          // 模拟用户开启权限后回调
-          this.invokeRegisteredCallback(
-            'locationCallback',
-            this.locationData
-          )
-        }, 3000)
+          this.permission = 1
+        }, 1000)
       },
 
       startOnceLocation: () => {
         // 模拟单次定位
         setTimeout(() => {
           console.log('定位完成:', JSON.stringify(this.locationData))
-          this.invokeRegisteredCallback(
-            'locationCallback',
-            this.locationData
-          )
-        }, 2000)
+          this.invokeRegisteredCallback('locationCallback', this.locationData)
+        }, 1000)
       },
     }
 
@@ -64,13 +56,13 @@ const mockAPP = {
   },
 
   // 模拟 $dsBridge.register
-  register (event, callback) {
+  register(event, callback) {
     console.log(`注册事件: ${event}`)
     this.registeredCallbacks[event] = callback
   },
 
   // 调用注册的回调
-  invokeRegisteredCallback (event, data) {
+  invokeRegisteredCallback(event, data) {
     const callback = this.registeredCallbacks[event]
     if (callback) {
       console.log(`触发回调: ${event}, 数据: ${data}`)

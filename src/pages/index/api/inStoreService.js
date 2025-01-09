@@ -212,7 +212,7 @@ export const fetchShopByCityAPI = (
  */
 export const fetchHotWordAPI = (
   data = {
-    type: 14, // 热词搜索
+    type: 12, // 热词搜索
   }
 ) =>
   request({
@@ -241,11 +241,9 @@ export const fetchHasShopCityListAPI = (
     lng: 121.45712,
     lat: 31.229234,
   }
-) => {
-  return request({
-    url: `presentation/customer/applet/shop/hasShopCityList`,
+) => request({
+    url: 'presentation/customer/applet/shop/hasShopCityList',
     method: 'POST',
     data,
     cqm: true,
   })
-}

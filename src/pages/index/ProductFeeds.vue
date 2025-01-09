@@ -25,7 +25,10 @@ import ProductList from './ProductList.vue'
 import NoData from '@/components/noData/index.vue'
 
 import { fetchRecommendClassifyAPI, fetchProductListAPI } from './api/mockAPI'
-// import { fetchRecommendClassifyAPI, fetchProductListAPI } from './api/inStoreService'
+// import {
+//   fetchRecommendClassifyAPI,
+//   fetchProductListAPI,
+// } from './api/inStoreService'
 
 export default {
   name: 'ProductFeeds',
@@ -101,7 +104,6 @@ export default {
       }
       const { cityCode, lon: lng, lat } = this.locationInfo
       this.isFetched = false
-      uni.$emit('skeleton-refresh', true) // 开启骨架屏
       const resp = await fetchProductListAPI({
         pageNum: this.params.pageNum,
         pageSize: 10,
@@ -116,7 +118,6 @@ export default {
         fromChannel: 'APP',
       })
       this.isFetched = true
-      uni.$emit('skeleton-refresh', false) // 关闭骨架屏
       console.log('🚀 ~ fetchProductListData ~ resp:', resp)
       this.totalCount = Number(resp.data.data.totalCount)
       this.products = this.products.concat(resp.data.data.data || [])

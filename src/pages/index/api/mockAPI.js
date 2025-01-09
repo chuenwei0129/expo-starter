@@ -1,5 +1,5 @@
 uni.addInterceptor({
-  returnValue(res) {
+  returnValue (res) {
     if (
       !(
         !!res &&
@@ -187,6 +187,6 @@ export const fetchHotWordAPI = () =>
  */
 export const fetchHasShopCityListAPI = () =>
   uni.request({
-    url: `https://run.mocky.io/v3/cfa99c3b-5283-48af-bbd7-d5a7512b5824`,
+    url: 'https://run.mocky.io/v3/cfa99c3b-5283-48af-bbd7-d5a7512b5824',
     method: 'GET',
   })

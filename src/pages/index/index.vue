@@ -3,7 +3,7 @@
     <!-- 顶部导航栏 -->
     <NavBar
       ref="navBarRef"
-      :nav-color="isNavBarFixed ? '#ffd4d3' : '#fff'"
+      :nav-color="isNavBarFixed ? '#f7f8fc' : '#fff'"
       show-back-btn
       :white-back="false"
       customback
@@ -23,13 +23,20 @@
               >
                 正在获取定位
               </text>
+              <!-- 手动选择城市和有定位权限并且定位完成或者从手动选择城市页面都可以回显内容 -->
               <text
-                v-else-if="permission === LocationPermissionStatus.GRANTED"
+                v-else-if="
+                  (permission === LocationPermissionStatus.GRANTED &&
+                    isLocationFinished) ||
+                  isManualCitySwitch ||
+                  isFromSelectPositionCityPage
+                "
                 class="location-name"
                 @click="goToSelectPositionCityPage"
               >
+                <!-- 如果手动切换城市或来自城市选择页面，优先展示城市名称 -->
                 {{
-                  isFromSelectPositionCityPage
+                  isManualCitySwitch || isFromSelectPositionCityPage
                     ? locationInfo.cityName
                     : locationInfo.address
                 }}
@@ -70,21 +77,6 @@
       </template>
     </NavBar>
 
-    <!-- <view
-      v-if="locationPermissionStatus.denied"
-      class="location-fail"
-    >
-      <view class="location-desc">
-        打开位置权限，查看附近的内容
-      </view>
-      <view
-        class="location-button"
-        @click="goToLocationPermissionSet"
-      >
-        开启
-      </view>
-    </view> -->
-
     <!-- 搜索框，滚动时隐藏 -->
     <view v-show="!isNavBarFixed" class="in-store-service__search-box">
       <SearchBar />
@@ -99,20 +91,20 @@
       img="https://frontend-cdn.chongpangpang.com/image/medical-mp/chat/empty-sheet-tag.png"
     /> -->
 
-    <view v-if="permission === LocationPermissionStatus.FETCHING">
-      获取权限中....
-    </view>
+    <Loading v-if="permission === LocationPermissionStatus.FETCHING" />
 
-    <MyNoData
+    <NoData
       v-if="permission === LocationPermissionStatus.DENIED"
       :style="{ height: `calc(100vh - ${navHeight})` }"
       no-data-text="未开启定位，无法为您解锁宠胖胖门店服务"
       img="https://frontend-cdn.chongpangpang.com/image/medical-mp/chat/empty-sheet-tag.png"
     >
       <template #button>
-        <button @click="goToLocationPermissionSet">立即开启</button>
+        <button class="slot-button" @click="goToLocationPermissionSet">
+          立即开启
+        </button>
       </template>
-    </MyNoData>
+    </NoData>
 
     <!-- 内容区 -->
     <view v-else-if="permission === LocationPermissionStatus.GRANTED">
@@ -152,16 +144,18 @@
         </BackToTop>
       </scroll-view>
 
-      <MyNoData
+      <NoData
         v-else-if="shopByCityList.fetched && shopByCityList.data.length === 0"
         :style="{ height: `calc(100vh - ${navHeight})` }"
         no-data-text="当前城市未开启服务"
         img="https://frontend-cdn.chongpangpang.com/image/medical-mp/chat/empty-sheet-tag.png"
       >
         <template #button>
-          <button @click="handleShowPopup">选择其他城市</button>
+          <button class="slot-button" @click="handleShowPopup">
+            选择其他城市
+          </button>
         </template>
-      </MyNoData>
+      </NoData>
 
       <u-popup
         :show="isShowPopup"
@@ -212,9 +206,9 @@ import NavigationArea from './NavigationArea.vue'
 import CartButton from './CartButton.vue'
 import SearchBar from './SearchBar.vue'
 import NavBar from '@/components/navBar/index.vue'
-import NoData from '@/components/noData/index.vue'
 import ProductFeeds from './ProductFeeds.vue'
-import MyNoData from './NoData.vue'
+import NoData from './NoData.vue'
+import Loading from './Loading.vue'
 
 // 引入 API 接口
 import {
@@ -227,7 +221,9 @@ import {
 } from './api/mockAPI'
 
 // 引入 MOCK APP 接口
+// #ifdef MP-WEIXIN
 import mockAPP from './api/mockAPP'
+// #endif
 
 // 引入 API 接口
 // import {
@@ -236,6 +232,7 @@ import mockAPP from './api/mockAPP'
 //   fetchComponentListAPI,
 //   fetchNavigationAPI,
 //   fetchShopByCityAPI,
+//   fetchHasShopCityListAPI,
 // } from './api/inStoreService'
 
 import { LocationPermissionStatus } from './constants/LocationPermission'
@@ -251,9 +248,9 @@ export default {
     CartButton,
     SearchBar,
     NavBar,
-    NoData,
     ProductFeeds,
-    MyNoData,
+    NoData,
+    Loading,
   },
 
   data() {
@@ -287,6 +284,15 @@ export default {
       // 是否有定位权限
       LocationPermissionStatus,
       permission: LocationPermissionStatus.UNDETERMINED,
+      // 标志位，是否已经完成定位
+      isLocationFinished: false,
+      // 是否手动切换城市标志位
+      isManualCitySwitch: false,
+      // 是否来自选择城市页面的标志位
+      isFromSelectPositionCityPage: false,
+      // 是否显示城市选择弹窗
+      isShowPopup: false,
+      cityList: [],
       // 定位信息
       locationInfo: {
         address: '',
@@ -299,11 +305,31 @@ export default {
         country: '',
         countryCode: '',
       },
-      isFromSelectPositionCityPage: false,
       isTriggered: false,
-      isShowPopup: false,
-      cityList: [],
     }
+  },
+
+  mounted() {
+    // 获取导航栏高度计算滚动高度
+    this.navHeight = this.$refs?.navBarRef?.navHeight
+  },
+
+  // 注册定位回调
+  onReady() {
+    this.$dsBridge.register('locationCallback', this.getLocationInfo)
+  },
+
+  onShow() {
+    console.log('🚀 ~ onShow ~ onShow:', 'onShow 触发')
+    // 获取购物车数量
+    this.$refs?.cartButtonRef?.getCartNum()
+    // 获取定位权限
+    this.goToCheckLocationPermission()
+  },
+
+  onHide() {
+    this.isFromSelectPositionCityPage = false
+    this.isManualCitySwitch = false
   },
 
   async onLoad(options) {
@@ -312,7 +338,9 @@ export default {
     // // 如果网络状态是离线，直接返回
     // if (this.isOffline) return
 
+    // #ifdef MP-WEIXIN
     this.$dsBridge = mockAPP
+    // #endif
 
     // MOCK 选择城市
     // const params = JSON.stringify({
@@ -329,35 +357,26 @@ export default {
     // 如果页面是选择城市跳转逻辑
     if (options.params) {
       this.isFromSelectPositionCityPage = true
-      // 不需要获取定位状态，状态由选择城市页面提供，已定位
-      this.permission = LocationPermissionStatus.GRANTED
       try {
         const locationInfo = JSON.parse(options.params)
+        // 加一层判断是否是重新定位还是选择城市
+        if (locationInfo.lat) {
+          // 是重新定位，回显定位信息，不用更新回显城市
+          this.isFromSelectPositionCityPage = false
+        }
+
+        // 更新定位信息
         this.locationInfo = { ...this.locationInfo, ...locationInfo }
       } catch (error) {
         console.log('🚀 ~ onLoad ~ error:', error)
       }
       // 写死经纬度，获取门店信息
-      this.locationInfo.lat = '30.25'
-      this.locationInfo.lon = '120.21'
-      // 获取当前城市门店信息
+      // this.locationInfo.lat = '30.25'
+      // this.locationInfo.lon = '120.21'
+      // 走接口获取当前城市门店信息
       this.fetchShopByCityData()
       return
     }
-
-    // 从首页进入逻辑
-    // 获取定位权限
-    this.checkLocationPermission()
-  },
-
-  onShow() {
-    // 获取购物车数量
-    this.$refs?.cartButtonRef?.getCartNum()
-  },
-
-  mounted() {
-    // 获取导航栏高度
-    this.navHeight = this.$refs?.navBarRef?.navHeight
   },
 
   methods: {
@@ -365,16 +384,13 @@ export default {
       this.isShowPopup = false
     },
     handleChangeCity(city) {
-      console.log('🚀 ~ handleChangeCity ~ city:', city)
+      // 是否手动切换城市
+      this.isManualCitySwitch = true
+      // 更新定位信息
       this.locationInfo.cityCode = city.cityCode
       this.locationInfo.cityName = city.cityName
-      // 回显城市
-      this.isFromSelectPositionCityPage = true
-      // 不需要获取定位状态，状态由选择城市页面提供，已定位
-      this.permission = LocationPermissionStatus.GRANTED
-      // 写死经纬度，获取门店信息
-      this.locationInfo.lat = '30.25'
-      this.locationInfo.lon = '120.21'
+      // this.locationInfo.lat = '30.25'
+      // this.locationInfo.lon = '120.21'
       this.isShowPopup = false
       // 获取当前城市门店信息
       this.fetchShopByCityData()
@@ -400,7 +416,8 @@ export default {
     },
     // 返回上一页
     goToPreviousPage() {
-      this.$dsBridge.call('closeCurrentWebview', {}) // 关闭 webview
+      console.log('🚀 ~ goToPreviousPage ~ goToPreviousPage:', goToPreviousPage)
+      // this.$dsBridge.call('closeCurrentWebview', {}) // 关闭 webview
     },
     goToSearchPage() {
       this.$dsBridge.call('gotoPageThroughRoute', {
@@ -423,34 +440,37 @@ export default {
     //   })
     // },
     // 检查定位权限
-    checkLocationPermission() {
+    goToCheckLocationPermission() {
+      // if (!this.$dsBridge.hasNativeMethod('checkLocationPermission')) {
+      //   return
+      // }
       // 正在获取定位权限状态
       this.permission = LocationPermissionStatus.FETCHING
-      // 获取定位权限状态 异步 返回！
       this.$dsBridge.call(
         'checkLocationPermission',
         'checkLocationPermission',
-        (data) => {
-          // 获取定位权限状态成功
-          try {
-            const hasLocationPermission = JSON.parse(data)
-            if (hasLocationPermission) {
-              // 已授权
-              this.permission = LocationPermissionStatus.GRANTED
-              // 定位操作往往需要一定的时间
-              // H5 通知 App 开始定位，App 在后台进行定位操作。
-              this.$dsBridge.call('startOnceLocation', 'startOnceLocation')
-              // 定位完成后，App 会通过回调将结果返回 H5。
-              this.$dsBridge.register('locationCallback', this.getLocationInfo)
-            } else {
-              // 没权限，直接展示开启定位页面
-              this.permission = LocationPermissionStatus.DENIED
-            }
-          } catch (error) {
-            console.log('🚀 ~ checkLocationPermission ~ error:', error)
-          }
-        }
+        this.afterCheckLocationPermission
       )
+    },
+    // 获取定位权限状态回调
+    afterCheckLocationPermission(data) {
+      try {
+        const hasLocationPermission = JSON.parse(data)
+        if (hasLocationPermission) {
+          // 已授权
+          this.permission = LocationPermissionStatus.GRANTED
+          // H5 通知 App 开始定位，App 在后台进行定位操作。
+          this.isLocationFinished = false
+          this.$dsBridge.call('startOnceLocation', 'startOnceLocation')
+          // 定位操作往往需要一定的时间，定位完成后，App 会通过回调将结果返回 H5。
+          // 回调已在 onReady 中注册
+        } else {
+          // 没权限，直接展示开启定位页面
+          this.permission = LocationPermissionStatus.DENIED
+        }
+      } catch (error) {
+        console.log('🚀 ~ checkLocationPermission ~ error:', error)
+      }
     },
     // 跳转定位APP权限设置逻辑
     goToLocationPermissionSet() {
@@ -458,31 +478,16 @@ export default {
         'gotoLocationPermissionSet',
         'gotoLocationPermissionSet'
       )
-      // 设置完怎么做？
-      this.afterLocationPermissionSet()
-      // this.$dsBridge.register('locationCallback', this.afterLocationPermissionSet)
-    },
-    afterLocationPermissionSet() {
-      // 再次发起定位
-      this.checkLocationPermission()
-      // 处理用户拒绝授权的情况
-      // if (data) {
-      //   // 用户已经授权
-      //   this.permission = LocationPermissionStatus.GRANTED
-      //   this.getLocationInfo(data)
-      // } else {
-      //   // 用户拒绝授权
-      //   this.permission = LocationPermissionStatus.DENIED
-      //   // TODO
-      // }
     },
     goToSelectPositionCityPage() {
       uni.navigateTo({
-        url: '/pagesD/selectPositionCity/index?urlType=1',
+        // url: '/pagesD/selectPositionCity/index?urlType=1',
+        url: '/pages/index/city/city',
       })
     },
     getLocationInfo(data) {
       console.log('🚀 ~ getLocationInfo ~ data:', data)
+      this.isLocationFinished = true
       try {
         if (!data) {
           // TODO: 这里需要处理下，如果获取不到定位信息，需要提示用户
@@ -505,16 +510,17 @@ export default {
         lng,
         lat,
       })
-      this.cityList = resp.data.data || []
+
+      this.cityList =
+        resp.data.data.sort((a, b) => a.distance - b.distance) || []
     },
     // 获取资源区数据
-    // TODO: 这块请求需要和后端沟通处理下
     async fetchResourceData() {
       const { cityCode, lon: lng, lat } = this.locationInfo
       const resp = await fetchResourceAPI({
         cityCode,
-        lng,
-        lat,
+        lng: lng ? lng : undefined,
+        lat: lat ? lat : undefined,
         fromChannel: 'APP',
       })
       this.resourceList = resp.data.data.resourceList || []
@@ -549,12 +555,11 @@ export default {
         bizType: 3,
       })
       this.shopByCityList.fetched = true
-      // this.shopByCityList.data = resp.data.data || []
-      // TODO: 修改
-      this.shopByCityList.data = []
+      this.shopByCityList.data = resp.data.data || []
+
       // 根据返回值处理门店信息
       if (this.shopByCityList.data.length === 0) {
-        // 如果门店信息为空，展示无门店逻辑
+        // 如果门店信息为空，展示无门店页面
         if (!this.cityList.length) this.fetchHasShopCityListData()
         return
       }
@@ -628,6 +633,7 @@ export default {
   &__search-icon {
     width: 46rpx;
     height: 46rpx;
+    font-size: 46rpx;
     opacity: 0;
     transition: opacity 0.3s, transform 0.3s;
     transform: scale(0.8);
@@ -651,7 +657,7 @@ export default {
 }
 
 .location-container {
-  position: relative;
+  // position: relative;
   display: flex;
 
   .cur-location {
@@ -713,6 +719,18 @@ export default {
     border-radius: 25rpx;
     text-align: center;
   }
+}
+
+.slot-button {
+  width: 250rpx;
+  height: 85rpx;
+  background: #fee900;
+  border-radius: 42rpx;
+  font-weight: 500;
+  font-size: 31rpx;
+  color: #1f1f1f;
+  line-height: 85rpx;
+  text-align: center;
 }
 
 .popup-box {

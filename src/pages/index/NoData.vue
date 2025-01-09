@@ -32,9 +32,9 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; // Center content vertically as well
-  padding: 20rpx; // Add some padding around the content
-  height: 100%; // Ensure the container takes up the full height available
+  justify-content: center;
+  padding: 20rpx;
+  height: 100%;
 
   .no-data-image {
     width: 346rpx;
