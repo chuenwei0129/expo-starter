@@ -1,0 +1,30 @@
+{
+  "code": 0,
+  "message": "",
+  "data": [
+    {
+      "image": "https://picsum.photos/300",
+      "imageHeight": "39",
+      "imageWidth": "66",
+      "link": "3333"
+    },
+    {
+      "image": "https://picsum.photos/301",
+      "imageHeight": "39",
+      "imageWidth": "66",
+      "link": "3333"
+    },
+    {
+      "image": "https://picsum.photos/302",
+      "imageHeight": "39",
+      "imageWidth": "66",
+      "link": "3333"
+    },
+    {
+      "image": "https://picsum.photos/303",
+      "imageHeight": "96",
+      "imageWidth": "96",
+      "link": "3333"
+    }
+  ]
+}
