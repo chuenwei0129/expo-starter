@@ -16,7 +16,7 @@ const mockAPP = {
     county: '海淀区',
   },
   // 模拟定位权限 0 未授权 1 已授权
-  permission: 0,
+  permission: 1,
 
   // 模拟 $dsBridge.call
   call(method, args, callback) {

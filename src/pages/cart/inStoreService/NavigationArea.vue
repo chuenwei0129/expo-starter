@@ -1,9 +1,6 @@
 <template>
   <view class="navigation-area">
-    <swiper
-      :indicator-dots="showIndicatorDots"
-      class="navigation-area__swiper"
-    >
+    <swiper :indicator-dots="showIndicatorDots" class="navigation-area__swiper">
       <swiper-item
         v-for="(pageItems, pageIndex) in paginatedItems"
         :key="pageIndex"
@@ -16,10 +13,7 @@
           class="navigation-area__swiper-item-content"
           :style="{ width: itemWidthPercentage + '%' }"
         >
-          <view
-            style="position: relative"
-            @click="handleNavigationClick(item)"
-          >
+          <view style="position: relative" @click="handleNavigationClick(item)">
             <u-image
               :src="item.image"
               mode="aspectFill"
@@ -29,7 +23,13 @@
             />
             <image
               v-if="item.cornerIcon"
-              style="position: absolute;width: 42rpx;height: 25rpx;top: -8rpx;left: 52rpx;"
+              style="
+                position: absolute;
+                width: 42rpx;
+                height: 25rpx;
+                top: -8rpx;
+                left: 52rpx;
+              "
               :src="item.cornerIcon"
             />
           </view>
@@ -55,7 +55,7 @@ export default {
     },
   },
 
-  data () {
+  data() {
     return {
       // 分页后的导航项数组
       paginatedItems: [],
@@ -64,13 +64,13 @@ export default {
 
   computed: {
     // 计算每个导航项的宽度百分比
-    itemWidthPercentage () {
+    itemWidthPercentage() {
       // 每行显示5个
       return 20 // 100 / 5 = 20
     },
 
     // 是否显示分页指示点
-    showIndicatorDots () {
+    showIndicatorDots() {
       // 当数据超过一页且第一页数据大于5个时显示指示点
       return this.paginatedItems.length > 1
     },
@@ -86,7 +86,7 @@ export default {
 
   methods: {
     // 对导航项数据进行分页
-    paginateItems () {
+    paginateItems() {
       const firstPageLimit = 5
       const secondPageLimit = 15
       const totalLimit = firstPageLimit + secondPageLimit
@@ -99,13 +99,18 @@ export default {
 
         // 第二页 (如果有, 且总数不超过 totalLimit)
         if (this.list.length > firstPageLimit) {
-          this.paginatedItems.push(this.list.slice(firstPageLimit, Math.min(this.list.length, totalLimit) ))
+          this.paginatedItems.push(
+            this.list.slice(
+              firstPageLimit,
+              Math.min(this.list.length, totalLimit)
+            )
+          )
         }
       }
     },
 
     // 处理导航项点击事件
-    handleNavigationClick (item) {
+    handleNavigationClick(item) {
       action_report({
         action_name: 'service_recommend_diamond_click',
         module_name: 'service',
@@ -123,13 +128,14 @@ export default {
         return
       }
 
+      // transparentTopBar=1 是控制导航栏，感觉需要后台自己配
       this.$dsBridge.call('gotoPageThroughRoute', {
-        page: `${window.location.origin}/crm-medical-h5/#${item.appLink}?transparentTopBar=1`,
+        page: `${window.location.origin}/crm-medical-h5/#${item.appLink}`,
       })
     },
 
     // 计算每个 swiper-item 的高度
-    getSwiperItemHeight (pageIndex) {
+    getSwiperItemHeight(pageIndex) {
       // 基础高度：一行的高度为 85rpx (图片高度) + 16rpx * 2 (上下边距) + 8rpx (文字上边距) + 24rpx(文字高度) = 157rpx
       const baseHeight = 157
 

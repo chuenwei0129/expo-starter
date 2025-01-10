@@ -73,6 +73,8 @@
 </template>
 
 <script>
+// import { action_report } from '@/utils/track'
+
 const BASE_HEIGHT = 157 // 基础高度
 const ROW_MARGIN_BOTTOM = 24 // 行间距
 const ITEMS_PER_ROW = 5 // 每行数量
@@ -146,7 +148,27 @@ export default {
       }
     },
     handleNavigationClick(item) {
-      console.log('🚀 ~ handleNavigationClick ~ item:', item)
+      action_report({
+        action_name: 'service_recommend_diamond_click',
+        module_name: 'service',
+        extend: {
+          user_id: this.$dsBridge.call('getUserId', 'getUserId'),
+          diamond_name: item.title,
+        },
+      })
+
+      // 检查 appLink 是否以 https 开头，如果是直接跳转如果不是按下面注释规则跳转
+      if (item.appLink.startsWith('https')) {
+        this.$dsBridge.call('gotoPageThroughRoute', {
+          page: `${item.appLink}`,
+        })
+        return
+      }
+
+      // transparentTopBar=1 是控制导航栏，感觉需要后台自己配
+      this.$dsBridge.call('gotoPageThroughRoute', {
+        page: `${window.location.origin}/crm-medical-h5/#${item.appLink}`,
+      })
     },
     // 计算每个 swiper-item 的高度, 改为计算属性
     getSwiperItemHeight(pageIndex) {

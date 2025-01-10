@@ -109,6 +109,7 @@
     <!-- 内容区 -->
     <view v-else-if="permission === LocationPermissionStatus.GRANTED">
       <scroll-view
+        id="scrollView"
         v-if="shopByCityList.fetched && shopByCityList.data.length"
         scroll-y
         :scroll-top="scrollTop"
@@ -132,16 +133,17 @@
           :list="resourceList"
           :location="locationInfo"
         />
+
+        <!-- 分类标签 -->
+        <view v-if="categoryList.length" class="sticky-container">
+          <FilterTabs :list="tabList" @onSwitch="onSwitchTab" />
+          <FilterOptions @filterChange="onFilterChange" />
+        </view>
+
         <!-- Feeds 组件 -->
         <ProductFeeds ref="productFeedsRef" :location-info="locationInfo" />
 
         <!-- 回到顶部按钮，滚动到一定位置时显示 -->
-        <BackToTop v-show="showBackToTop" ref="backToTop" @click="scrollToTop">
-          <template #icon>
-            <!-- <u-icon name="arrow-upward" /> -->
-            <view class="icon iconfont icon-BackTop" />
-          </template>
-        </BackToTop>
       </scroll-view>
 
       <NoData
@@ -156,6 +158,12 @@
           </button>
         </template>
       </NoData>
+
+      <BackToTop v-show="showBackToTop" ref="backToTop" @click="scrollToTop">
+        <template #icon>
+          <u-icon name="arrow-upward" />
+        </template>
+      </BackToTop>
 
       <u-popup
         :show="isShowPopup"
@@ -209,6 +217,8 @@ import NavBar from '@/components/navBar/index.vue'
 import ProductFeeds from './ProductFeeds.vue'
 import NoData from './NoData.vue'
 import Loading from './Loading.vue'
+import FilterTabs from './FilterTabs.vue'
+import FilterOptions from './FilterOptions.vue'
 
 // 引入 API 接口
 import {
@@ -218,12 +228,11 @@ import {
   fetchNavigationAPI,
   fetchShopByCityAPI,
   fetchHasShopCityListAPI,
+  fetchRecommendClassifyAPI,
 } from './api/mockAPI'
 
 // 引入 MOCK APP 接口
-// #ifdef MP-WEIXIN
 import mockAPP from './api/mockAPP'
-// #endif
 
 // 引入 API 接口
 // import {
@@ -251,10 +260,13 @@ export default {
     ProductFeeds,
     NoData,
     Loading,
+    FilterTabs,
+    FilterOptions,
   },
 
   data() {
     return {
+      categoryList: [],
       // 是否在线
       // isOffline: false,
       // 导航栏高度
@@ -338,9 +350,7 @@ export default {
     // // 如果网络状态是离线，直接返回
     // if (this.isOffline) return
 
-    // #ifdef MP-WEIXIN
     this.$dsBridge = mockAPP
-    // #endif
 
     // MOCK 选择城市
     // const params = JSON.stringify({
@@ -380,6 +390,26 @@ export default {
   },
 
   methods: {
+    onSwitchTab(tabIndex) {
+      console.log('🚀 ~ onSwitchTab ~ tabIndex:', tabIndex)
+      // if (this.params.categoryId === tabIndex) {
+      //   return
+      // }
+      // this.params.categoryId = tabIndex
+      // this.reset()
+      // this.fetchProductListData()
+    },
+    onFilterChange(filterType) {
+      console.log('🚀 ~ onFilterChange ~ filterType:', filterType)
+      this.params.sortType = filterType
+      this.reset()
+      this.fetchProductListData() // 重新获取数据
+    },
+    async fetchRecommendClassifyData() {
+      const resp = await fetchRecommendClassifyAPI()
+      console.log('🚀 ~ fetchRecommendClassifyData ~ resp:', resp)
+      this.list = resp.data.data.filter((item) => item.recommendType === 1)
+    },
     handleClosePopup() {
       this.isShowPopup = false
     },
@@ -569,6 +599,7 @@ export default {
         this.fetchCouponListData(),
         this.fetchComponentListData(),
         this.fetchResourceData(),
+        this.fetchRecommendClassifyData(),
       ])
     },
 
@@ -603,6 +634,32 @@ export default {
       // 当视图渲染结束 重新设置为 0
       this.$nextTick(() => {
         this.scrollTop = 0
+      })
+    },
+    scrollToTabsTop() {
+      // 通过查询获取 scroll-view 实例
+      const query = uni.createSelectorQuery().in(this)
+      query.select('#scrollView').boundingClientRect() // 获取 scroll-view 的 boundingClientRect
+      // query.select('.sticky-container').boundingClientRect() // 获取 .sticky-container 的 boundingClientRect
+      this.$refs.productFeedsRef.style()
+
+      query.exec((res) => {
+        if (res && res[0] && res[1]) {
+          const scrollViewRect = res[0] // scroll-view 的 boundingClientRect
+          const stickyContainerRect = res[1] // .sticky-container 的 boundingClientRect
+
+          // 计算 .sticky-container 到 scroll-view 顶部的距离
+          const scrollTopDistance = stickyContainerRect.top - scrollViewRect.top
+
+          // 通过查询获取 scroll-view 实例并设置 scrollTop
+          query.select('#scrollView').node()
+          query.exec((scrollRes) => {
+            if (scrollRes && scrollRes[0] && scrollRes[0].node) {
+              const scrollView = scrollRes[0].node
+              scrollView.scrollTop = scrollTopDistance // 设置 scroll-view 的 scrollTop
+            }
+          })
+        }
       })
     },
   },
@@ -786,6 +843,14 @@ export default {
       background: #fee900;
       border-radius: 40rpx;
     }
+  }
+
+  .sticky-container {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: #fff;
+    box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
   }
 }
 </style>

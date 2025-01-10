@@ -1,13 +1,12 @@
 <template>
   <view>
-    <!-- 分类标签 -->
-    <view v-if="list.length" class="sticky-container">
-      <FilterTabs :list="tabList" @onSwitch="onSwitchTab" />
-      <FilterOptions @filterChange="onFilterChange" />
-    </view>
     <!-- 展示商品信息 -->
     <view>
-      <ProductList v-if="products.length" :goods="formattedProducts" />
+      <ProductList
+        v-if="products.length"
+        :goods="formattedProducts"
+        class="product-list"
+      />
       <view v-if="isFinished" class="last-container"> 已经到底啦喵～ </view>
       <NoData
         v-else-if="isFetched && !products.length"
@@ -19,12 +18,10 @@
 </template>
 
 <script>
-import FilterTabs from './FilterTabs.vue'
-import FilterOptions from './FilterOptions.vue'
 import ProductList from './ProductList.vue'
 import NoData from '@/components/noData/index.vue'
 
-import { fetchRecommendClassifyAPI, fetchProductListAPI } from './api/mockAPI'
+import { fetchProductListAPI } from './api/mockAPI'
 // import {
 //   fetchRecommendClassifyAPI,
 //   fetchProductListAPI,
@@ -33,8 +30,6 @@ import { fetchRecommendClassifyAPI, fetchProductListAPI } from './api/mockAPI'
 export default {
   name: 'ProductFeeds',
   components: {
-    FilterTabs,
-    FilterOptions,
     ProductList,
     NoData,
   },

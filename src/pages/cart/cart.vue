@@ -1,105 +1,130 @@
 <template>
-  <view class="details">
-    <swiper
-      class="swiper"
-      :duration="500"
-      :current="swiperIndex"
-      @change="changeSwiper"
-      :style="{ height: swiperHeight + 'px' }"
-      circular
-      indicator-dots
-      indicator-color="rgba(0, 0, 0, .3)"
-      indicator-active-color="#007aff"
+  <view>
+    <!-- 滚动区域 -->
+    <scroll-view
+      :scroll-y="true"
+      :scroll-top="scrollTop"
+      @scroll="handleScroll"
+      style="height: 100vh"
     >
-      <swiper-item v-for="(item, index) in bannerList" :key="index">
-        <image
-          :id="'wrap' + index"
-          class="swiper-img"
-          :src="item"
-          mode="widthFix"
-          @load="imageLoaded(index)"
-        ></image>
-      </swiper-item>
-    </swiper>
+      <view
+        v-for="(section, index) in sections"
+        :key="index"
+        :ref="'section-' + index"
+        class="content-section"
+      >
+        <view class="section-title">{{ section.title }}</view>
+        <view class="section-content">{{ section.content }}</view>
+      </view>
+
+      <view
+        v-for="(section, index) in sections"
+        :key="index"
+        :ref="'section-' + index"
+        class="content-section"
+      >
+        <view class="section-title">{{ section.title }}</view>
+        <view class="section-content">{{ section.content }}</view>
+      </view>
+      <!-- Tab 区域 -->
+      <view class="tab-container" ref="tabContainer">
+        <view
+          v-for="(tab, index) in tabs"
+          :key="index"
+          :class="['tab-item', { active: activeTab === index }]"
+          @click="handleTabClick(index)"
+        >
+          {{ tab.name }}
+        </view>
+      </view>
+
+      <view
+        v-for="(section, index) in sections"
+        :key="index"
+        :ref="'section-' + index"
+        class="content-section"
+      >
+        <view class="section-title">{{ section.title }}</view>
+        <view class="section-content">{{ section.content }}</view>
+      </view>
+
+      <!-- 内容区域 -->
+      <view
+        v-for="(section, index) in sections"
+        :key="index"
+        :ref="'section-' + index"
+        class="content-section"
+      >
+        <view class="section-title">{{ section.title }}</view>
+        <view class="section-content">{{ section.content }}</view>
+      </view>
+    </scroll-view>
   </view>
 </template>
-
 <script>
 export default {
   data() {
     return {
-      swiperIndex: 0, // 当前索引
-      swiperHeight: 0, // 滑块的高度(单位px)
-      bannerList: [], // 初始化为空数组
-      imageLoadedCount: 0, // 记录已加载的图片数量
-      baseWidth: 750, // 设计稿基准宽度，根据你的设计稿调整
+      tabs: [{ name: 'Tab 1' }, { name: 'Tab 2' }, { name: 'Tab 3' }],
+      sections: [
+        { title: 'Section 1', content: 'Content of Section 1' },
+        { title: 'Section 2', content: 'Content of Section 2' },
+        { title: 'Section 3', content: 'Content of Section 3' },
+      ],
+      activeTab: 0, // 当前激活的 tab 索引
+      scrollTop: 0, // 滚动位置
     }
   },
-  onLoad() {
-    this.generateBannerList()
-    this.$nextTick(() => {
-      this.setSwiperHeight() // 动态设置 swiper 的高度
-    })
-  },
   methods: {
-    generateBannerList() {
-      const widths = [this.baseWidth, this.baseWidth, this.baseWidth] // 对应三个 banner 的宽度，可以根据需要调整
-      const heights = [400, 600, 500] // 对应三个 banner 的高度，可以根据需要调整，现在固定
+    handleTabClick(index) {
+      this.activeTab = index
+      const section = this.$refs[`section-${index}`]
+      if (section && section[0]) {
+        const top = section[0].offsetTop // 获取目标锚点位置
+        this.scrollTop = top
+      }
+    },
+    handleScroll(event) {
+      const scrollTop = event.detail.scrollTop
 
-      this.bannerList = widths.map((width, index) => {
-        const height = heights[index]
-        return `https://picsum.photos/${width}/${height}?image=${Math.floor(
-          Math.random() * 1000
-        )}` // 随机生成图片 URL
-      })
-    },
-    changeSwiper(e) {
-      this.swiperIndex = e.detail.current
-      this.$nextTick(() => {
-        this.setSwiperHeight() // 动态设置 swiper 的高度
-      })
-    },
-    /* 动态设置 swiper 的高度 */
-    setSwiperHeight() {
-      // 如果所有图片都已加载，则使用当前索引的图片高度
-      if (this.imageLoadedCount === this.bannerList.length) {
-        const element = '#wrap' + this.swiperIndex
-        const query = uni.createSelectorQuery().in(this)
-        query.select(element).boundingClientRect()
-        query.exec((res) => {
-          if (res && res[0]) this.swiperHeight = res[0].height
-        })
-      } else {
-        // 如果还有图片未加载，则使用默认高度或者保持当前高度
-        // 这里可以根据需要设置一个默认高度，例如：
-        if (this.swiperHeight === 0) {
-          this.swiperHeight = 400 // 默认高度设置为 400px
+      // 自动切换 Tab
+      for (let i = 0; i < this.sections.length; i++) {
+        const section = this.$refs[`section-${i}`]
+        if (section && section[0]) {
+          const rect = section[0].getBoundingClientRect()
+          if (rect.top >= 0 && rect.top < 100) {
+            this.activeTab = i
+            break
+          }
         }
       }
-    },
-    imageLoaded(index) {
-      // 监听图片加载事件，每加载一张图片，计数器加一
-      if (index === this.swiperIndex) {
-        this.setSwiperHeight()
-      }
-      this.imageLoadedCount++
     },
   },
 }
 </script>
-
-<style lang="scss" scoped>
-.details {
-  width: 100%;
-  overflow: hidden;
+<style scoped>
+.tab-container {
+  display: flex;
+  background-color: #fff;
+  z-index: 10;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
 }
-
-.swiper {
-  width: 100%;
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  cursor: pointer;
 }
-
-.swiper-img {
-  width: 100%;
-  display: block;
+.tab-item.active {
+  font-weight: bold;
+  color: #007aff;
+  border-bottom: 2px solid #007aff;
+}
+.content-section {
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
 }
 </style>
