@@ -119,15 +119,14 @@ export const fetchNavigationAPI = (
  * })
  */
 export const fetchRecommendClassifyAPI = (
-  data = {
-    recommendType: 1, // 推荐类型 => 1：类目区 2：推荐区 3：资源位
-    commodityClassifyType: 2, // 商品类型 => 1：实物商品 2：服务商品 3：活体商品
-  }
+  // data = {
+  //   recommendType: 1, // 推荐类型 => 1：类目区 2：推荐区 3：资源位
+  //   commodityClassifyType: 2, // 商品类型 => 1：实物商品 2：服务商品 3：活体商品
+  // }
 ) =>
   request({
-    url: 'presentation/customer/app/homepage/v2/recommendClassify',
+    url: 'presentation/customer/inStoreService/secondary/categoryQuery',
     method: 'POST',
-    data,
     cqm: true,
   })
 

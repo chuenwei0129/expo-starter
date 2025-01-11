@@ -11,8 +11,11 @@
         :src="picture"
         mode="aspectFill"
       />
-      <view v-if="shopName" class="goods-address">
-        {{ distance }} | {{ shopName }}
+      <view
+        v-if="shopName"
+        class="goods-address"
+      >
+        {{ distance ? `${distance} | ${shopName}` : shopName }}
       </view>
     </view>
     <view
@@ -49,10 +52,13 @@
         paddingRight: needMargin ? '17rpx' : '0',
       }"
     >
-      <!-- <view class="tag-item-prepare" v-if="hasPrepare">养宠必备</view> -->
-      <!-- <view v-if="hasDeliverTag" class="tag-item" style="flex-shrink: 0">
+      <view
+        v-if="hasDeliverTag"
+        class="tag-item"
+        style="flex-shrink: 0"
+      >
         <DeliveryTag :text-size="21" />
-      </view> -->
+      </view>
       <view
         v-if="hasPromotion"
         :class="[
@@ -88,45 +94,40 @@
         :sale-price-integer-font-size="38"
         show-discounts
       />
-      <!-- <image
+      <view
         v-if="canAddCart"
         class="add-cart-icon"
-        src="https://frontend-cdn.chongpangpang.com/image/medical-mp/goods/shop-cart-logo-active1.png"
         @click.stop="handleAddCart"
-      /> -->
-      <view v-if="canAddCart" class="add-cart-icon" @click.stop="handleAddCart">
+      >
         <i class="iconfont icon-a-ShoppingCart" />
       </view>
-      <view v-else class="sold-stock">
-        {{ soldStockTag ? `销量${soldStockTag}` : '' }}
+      <view
+        v-else
+        class="sold-stock"
+      >
+        {{ soldStockTag ? `销量${soldStockTag}` : "" }}
       </view>
     </view>
   </view>
 </template>
 
 <script>
-// import GoodsPrice from '@/components/goodsPrice/index.vue'
-// import { display_report } from '@/utils/track'
-// import DeliveryTag from '@/components/goodsCard/components/deliveryTag.vue'
-// import { addCart } from '@/api/cart'
-// import PromotionTag from '@/components/goodsCard/components/promotionTag.vue'
-
-import GoodsPrice from '../../components/goodsPrice/index.vue'
-// import { display_report } from '@/utils/track'
-// import DeliveryTag from '@/components/goodsCard/components/deliveryTag.vue'
-// import { addCart } from '@/api/cart'
-import PromotionTag from './PromotionTag.vue'
+import GoodsPrice from '@/components/goodsPrice/index.vue'
+import { display_report } from '@/utils/track'
+import DeliveryTag from '@/components/goodsCard/components/deliveryTag.vue'
+import { addCart } from '@/api/cart'
+import PromotionTag from '@/components/goodsCard/components/promotionTag.vue'
 export default {
   name: 'GoodsCard',
   components: {
     PromotionTag,
-    // DeliveryTag,
+    DeliveryTag,
     GoodsPrice,
   },
   props: {
     goods: {
       type: Object,
-      default: {
+      default: () => ({
         picture: '',
         title: '',
         salePrice: '',
@@ -141,7 +142,7 @@ export default {
           rightType: 0,
           rule: {},
         },
-      },
+      }),
     },
     needMargin: {
       type: Boolean,
@@ -157,105 +158,87 @@ export default {
     },
     imageStyle: {
       type: Object,
-      default: {
+      default: () => ({
         backgroundColor: 'white',
-      },
+      })
+    },
+    isRecommend: {
+      type: Boolean,
+      default: false,
     },
   },
-  data() {
+  data () {
     return {}
   },
   computed: {
-    picture() {
+    picture () {
       return this.goods.picture
     },
-    title() {
+    title () {
       return this.goods.title
     },
-    goodId() {
+    goodId () {
       return this.goods.id
     },
-    salePrice() {
+    salePrice () {
       return this.goods.salePrice
     },
-    originPrice() {
+    originPrice () {
       return this.goods.originPrice
     },
-    skuTag() {
+    skuTag () {
       return this.goods.skuTag
     },
-    newUserTag() {
+    newUserTag () {
       return this.goods.newuserTag
     },
-    promotion() {
+    promotion () {
       return this.goods.promotion
     },
-    hasDeliverTag() {
+    hasDeliverTag () {
       return this.skuTag === 2
     },
-    hasPromotion() {
-      return this.goods.promotion && this.goods.promotion.promotionId.length > 0
+    hasPromotion () {
+      return (
+        this.goods.promotion && this.goods.promotion?.promotionId?.length > 0
+      )
     },
-    soldStockTag() {
+    soldStockTag () {
       return this.goods.soldStockTag
     },
-    distance() {
-      return this.goods.distance
+    distance () {
+       return this.goods.distance
     },
-    shopName() {
-      return this.goods.shopName && this.goods.shopName.slice(0, 14)
-    },
+    shopName () {
+       return this.goods.shopName && this.goods.shopName.slice(0, 14)
+    }
   },
-  mounted() {
-    if (this.eType === 'home') {
+  mounted () {
+
+    if (this.isRecommend) {
       display_report({
-        display_name: 'home_feed_goods_display',
-        object_type: 'home',
-        extend: {
-          goods_id: this.goodId,
+      display_name: 'service_recommend_feedscommodity_display',
+      object_type: 'service',
+      extend: {
+          user_id: this.$dsBridge.call('getUserId', 'getUserId'),
+          commodity_name: this.goods.title,
+          commodity_id: this.goods.goodId
         },
       })
-    } else if (this.eType === 'filterGoodsService') {
-      display_report({
-        display_name: 'class2_commodity_show',
-        object_type: 'class2',
+    } else {
+        display_report({
+        display_name: 'service_category_feedscommodity_display',
+        object_type: 'service',
         extend: {
-          commodity_id: this.goodId,
-        },
-      })
-    } else if (this.eType === 'recommend') {
-      display_report({
-        display_name: 'shop_selected_commodity_show',
-        object_type: 'shop',
-        extend: {
-          commodity_name: this.title,
-          commodity_id: this.goodId,
+          user_id: this.$dsBridge.call('getUserId', 'getUserId'),
+          commodity_name: this.goods.title,
+          commodity_id: this.goods.goodId
         },
       })
     }
-
-    uni.$on('goodsChange', (data) => {
-      const { goodData, isWatch } = data
-      if (isWatch) {
-        goodData.forEach((goodsItem) => {
-          if (goodsItem.itemId === this.goodId) {
-            if (this.eType === 'recommend') {
-              display_report({
-                display_name: 'shop_selected_commodity_show',
-                object_type: 'shop',
-                extend: {
-                  commodity_name: this.title,
-                  commodity_id: this.goodId,
-                },
-              })
-            }
-          }
-        })
-      }
-    })
   },
   methods: {
-    async handleAddCart() {
+    async handleAddCart () {
       uni.$u.debounce(async () => {
         const itemData = {
           cartType: 1,
@@ -348,6 +331,7 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
+    line-clamp: 2;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     white-space: normal;

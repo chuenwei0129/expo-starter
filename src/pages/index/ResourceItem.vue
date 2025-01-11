@@ -36,6 +36,7 @@
 
 <script>
 import ResourceCard from './ResourceCard.vue'
+import { action_report } from '@/utils/track'
 
 export default {
   name: 'ResourceItem',
@@ -62,19 +63,23 @@ export default {
       console.log('🚀 ~ handleViewMore ~ item:', this.resource)
       console.log(this.$props.location)
       uni.navigateTo({
-        url: `/pagesB/takeBathPage/index?resource=${this.resource.id}&cityCode=${this.location.cityCode}&lng=${this.location.lon}&lat=${this.location.lat}`,
+        url: `/pagesB/takeBathPage/index?resource=${this.resource.id}&cityCode=${this.location.cityCode}&lon=${this.location.lon}&lat=${this.location.lat}`,
       })
     },
     handleClickProduct (item) {
       console.log('🚀 ~ handleClickProduct ~ item:', item)
-      // TODO: 跳转到商品详情页面
-      uni.$u.debounce(() => {
-        uni.navigateTo({
-          url: `/pagesC/goodsServiceDetail/index?itemId=${
-            item?.itemId || ''
-          }&skuId=${item?.skuId || ''}&shopId=${item?.shopId}`,
+        action_report({
+          action_name: 'service_recommend_resource_click',
+          module_name: 'service',
+          extend: {
+            user_id: this.$dsBridge.call('getUserId', 'getUserId'),
+            recommend_name: item.name,
+          },
         })
-      }, 500)
+      // TODO: 跳转到商品详情页面
+      this.$dsBridge.call('gotoPageThroughRoute', {
+        page: `${window.location.origin}/crm-medical-h5/#/pagesC/goodsServiceDetail/index?itemId=${item.itemId}&skuId=${item.skuId || ''}&shopId=${item.shopId}&transparentTopBar=1`,
+      })
     },
   },
 }
@@ -86,6 +91,7 @@ export default {
   margin: 0 auto;
   margin-bottom: 25rpx;
   border-radius: 16rpx;
+  background-color: #fff;
 }
 
 /* 标题区域样式 */
@@ -94,8 +100,6 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 30rpx;
-  background-color: #fff;
-  border-radius: 23rpx;
 }
 
 .resource-item__title {

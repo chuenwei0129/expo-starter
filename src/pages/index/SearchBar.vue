@@ -1,12 +1,14 @@
 <template>
-  <view class="search-bar" @click="$u.debounce(navigateToSearch, 500)">
+  <view class="search-bar" @click="$u.debounce(goToSearchPage, 500)">
     <view class="search-bar__input">
       <view class="search-bar__placeholder">
         <!-- <scan-code color="red" /> -->
         <view class="search-bar__divider" />
-        <text class="search-bar__text">
-          {{ currentKeyword || '搜你想要的到店服务名称' }}
-        </text>
+        <transition name="fade-slide-up">
+          <text v-if="showText" class="search-bar__text">
+            {{ currentKeyword }}
+          </text>
+        </transition>
       </view>
       <view class="search-bar__button">
         <image
@@ -20,19 +22,21 @@
 </template>
 
 <script>
-// import ScanCode from '@/components/scanCode/index.vue'
+import ScanCode from '@/components/scanCode/index.vue'
 import { fetchHotWordAPI } from './api/mockAPI'
-// import {fetchHotWordAPI} from './api/inStoreService'
+// import { fetchHotWordAPI } from './api/inStoreService'
+import { action_report } from '@/utils/track'
 
 export default {
   name: 'SearchBar',
-  // components: { ScanCode },
+  components: { ScanCode },
   data() {
     return {
       hotKeywords: [], // 热词列表
-      currentKeyword: '', // 当前显示的热词
+      currentKeyword: '搜你想要的到店服务名称', // 当前显示的热词
       loopTimer: null, // 热词轮播定时器
       rollTime: 5000, // 轮播时间间隔
+      showText: true, // 控制文本显示
     }
   },
   mounted() {
@@ -43,22 +47,22 @@ export default {
     this.loopTimer = null
   },
   methods: {
-    navigateToSearch() {
-      // #ifdef MP-WEIXIN
-      uni.navigateTo({
-        url: '/pagesC/searchGoods/index?keyword=' + this.currentKeyword,
+    goToSearchPage() {
+      action_report({
+        action_name: 'service_search_click',
+        module_name: 'service',
+        extend: {
+          user_id: this.$dsBridge.call('getUserId', 'getUserId'),
+        },
       })
-      // #endif
-      // #ifdef H5
+
       this.$dsBridge.call('gotoPageThroughRoute', {
         page: '/home/search?scene=5&keyword=' + this.currentKeyword,
       })
-      // #endif
     },
     // 获取热词列表
     async fetchHotWordData() {
       const resp = await fetchHotWordAPI()
-      console.log('🚀 ~ fetchHotWordData ~ resp:', resp)
       this.hotKeywords = resp.data.hotWords || []
       this.rollTime = resp.data.rollTime * 1000
       this.startKeywordRotation() // 获取到热词后开始轮播
@@ -71,7 +75,12 @@ export default {
         this.currentKeyword = this.hotKeywords[currentIndex] // 初始化显示第一个热词
         this.loopTimer = setInterval(() => {
           currentIndex = (currentIndex + 1) % this.hotKeywords.length
-          this.currentKeyword = this.hotKeywords[currentIndex]
+          // 使用 nextTick 确保 DOM 更新后再触发动画
+          this.showText = false
+          this.$nextTick(() => {
+            this.currentKeyword = this.hotKeywords[currentIndex]
+            this.showText = true
+          })
         }, this.rollTime) // 每 5 秒切换一次
       }
     },
@@ -79,7 +88,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+@import '@/utils/fn.scss';
 .search-bar {
   width: 100%;
   border-radius: 18px;
@@ -112,8 +122,11 @@ export default {
   }
 
   &__text {
+    @include ellipsis(500rpx);
     font-size: inherit;
-    color: inherit;
+    color: #666666;
+    max-height: 63rpx; // 限制高度，防止溢出
+    overflow: hidden;
   }
 
   &__button {
@@ -133,5 +146,22 @@ export default {
     width: 20px;
     height: 20px;
   }
+}
+
+// 过渡动画
+.fade-slide-up-enter-active,
+.fade-slide-up-leave-active {
+  transition: all 1s ease; // 增加过渡时间到 1s
+}
+
+.fade-slide-up-enter,
+.fade-slide-up-leave-to {
+  opacity: 0; // 初始和结束时完全透明
+  transform: translateY(50%); // 从下方 50% 进入
+}
+
+.fade-slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-50%); // 向上方 50% 消失
 }
 </style>

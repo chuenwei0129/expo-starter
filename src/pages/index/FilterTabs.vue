@@ -55,7 +55,7 @@ export default {
       if (rect) {
         this.tabWidth = rect.width - 24 > 28 ? rect.width - 24 : 28
       }
-      this.$emit('onSwitch', item.index)
+      this.$emit('onSwitch', item)
     },
   },
 }

@@ -5,9 +5,9 @@
       :indicator-dots="false"
       :duration="500"
       :current="swiperIndex"
-      @change="handleSwiperChange"
       :style="{ height: swiperHeight }"
       circular
+      @change="handleSwiperChange"
     >
       <swiper-item
         v-for="(pageItems, pageIndex) in paginatedItems"
@@ -16,9 +16,9 @@
         :style="{ height: getSwiperItemHeight(pageIndex) }"
       >
         <view
-          class="navigation-area__swiper-item-row"
           v-for="(row, rowIndex) in getRows(pageItems, pageIndex)"
           :key="rowIndex"
+          class="navigation-area__swiper-item-row"
           :style="{
             marginBottom:
               rowIndex < getRows(pageItems, pageIndex).length - 1
@@ -27,7 +27,7 @@
           }"
         >
           <view
-            v-for="(item, itemIndex) in row"
+            v-for="(item) in row"
             :key="item.title"
             class="navigation-area__swiper-item-content"
             :style="{ width: itemWidthPercentage + '%' }"
@@ -59,7 +59,10 @@
       </swiper-item>
     </swiper>
     <!-- 自定义指示器 -->
-    <view class="navigation-area__custom-indicator" v-if="showIndicatorDots">
+    <view
+      v-if="showIndicatorDots"
+      class="navigation-area__custom-indicator"
+    >
       <view
         v-for="(page, index) in paginatedItems"
         :key="index"
@@ -67,13 +70,13 @@
         :class="{
           'navigation-area__indicator-dot--active': index === swiperIndex,
         }"
-      ></view>
+      />
     </view>
   </view>
 </template>
 
 <script>
-// import { action_report } from '@/utils/track'
+import { action_report } from '@/utils/track'
 
 const BASE_HEIGHT = 157 // 基础高度
 const ROW_MARGIN_BOTTOM = 24 // 行间距
@@ -89,23 +92,23 @@ export default {
       default: () => [],
     },
   },
-  data() {
+  data () {
     return {
       swiperIndex: 0,
       paginatedItems: [],
     }
   },
   computed: {
-    itemWidthPercentage() {
+    itemWidthPercentage () {
       return 100 / ITEMS_PER_ROW
     },
-    showIndicatorDots() {
+    showIndicatorDots () {
       return this.paginatedItems.length > 1
     },
-    rowMarginBottom() {
+    rowMarginBottom () {
       return `${ROW_MARGIN_BOTTOM}rpx`
     },
-    swiperHeight() {
+    swiperHeight () {
       return this.getSwiperItemHeight(this.swiperIndex)
     },
   },
@@ -116,7 +119,7 @@ export default {
     },
   },
   methods: {
-    paginateItems() {
+    paginateItems () {
       this.paginatedItems = []
       for (
         let i = 0;
@@ -129,7 +132,7 @@ export default {
         this.paginatedItems.push(this.list.slice(start, end))
       }
     },
-    getRows(pageItems, pageIndex) {
+    getRows (pageItems, pageIndex) {
       const rows = []
       const isFirstPage = pageIndex === 0
       const perRow = isFirstPage ? pageItems.length : ITEMS_PER_ROW // 第一页特殊处理
@@ -140,14 +143,14 @@ export default {
 
       return rows
     },
-    handleSwiperChange(e) {
+    handleSwiperChange (e) {
       const newIndex = e.detail.current
       if (newIndex !== this.swiperIndex) {
         // 只在页码变化时才更新高度
         this.swiperIndex = newIndex
       }
     },
-    handleNavigationClick(item) {
+    handleNavigationClick (item) {
       action_report({
         action_name: 'service_recommend_diamond_click',
         module_name: 'service',
@@ -171,7 +174,7 @@ export default {
       })
     },
     // 计算每个 swiper-item 的高度, 改为计算属性
-    getSwiperItemHeight(pageIndex) {
+    getSwiperItemHeight (pageIndex) {
       if (!this.paginatedItems[pageIndex]) return `${BASE_HEIGHT}rpx`
       const rows = this.getRows(
         this.paginatedItems[pageIndex],
@@ -187,11 +190,11 @@ export default {
 <style lang="scss" scoped>
 $base-height: 157rpx;
 $row-margin-bottom: 24rpx;
-$indicator-dot-size: 12rpx;
-$active-indicator-dot-size: 24rpx;
-$indicator-opacity: 0.25;
 
 .navigation-area {
+  width: 716rpx;
+  margin: 0 auto;
+  margin-bottom: 30rpx;
   position: relative;
   padding-bottom: 20rpx;
 
@@ -243,18 +246,17 @@ $indicator-opacity: 0.25;
   }
 
   &__indicator-dot {
-    width: $indicator-dot-size;
-    height: $indicator-dot-size;
-    border-radius: 50%;
+    width: 12rpx;
+    height: 4rpx;
+    border-radius: 4rpx;
     background-color: #1f1f1f;
-    opacity: $indicator-opacity;
-    margin: 0 12rpx;
+    opacity: 0.25;
+    margin: 0 4rpx;
     transition: all 0.3s ease;
 
     &--active {
       opacity: 1;
-      width: $active-indicator-dot-size;
-      border-radius: $indicator-dot-size;
+      width: 15rpx;
     }
   }
 }

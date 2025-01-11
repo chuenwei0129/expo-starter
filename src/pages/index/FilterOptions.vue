@@ -13,6 +13,7 @@
         智能排序
       </view>
       <view
+        v-if="isShowDistance"
         :class="[
           'filter-options__item',
           isFilterSelected(filterTypes.DISTANCE)
@@ -57,8 +58,16 @@
 </template>
 
 <script>
+import { action_report, display_report } from '@/utils/track'
+
 export default {
   name: 'FilterOptions',
+  props: {
+    isShowDistance: {
+      type: Boolean,
+      default: false,
+    },
+  },
   emits: ['filterChange'],
   data () {
     return {
@@ -91,11 +100,51 @@ export default {
       return 'filter-options__price-icon'
     },
   },
+  watch: {
+    isShowDistance: {
+      handler (newVal, oldVal) {
+        if (newVal === oldVal) return // 检查是否变化
+
+        const filterOptions = newVal
+          ? ['智能排序', '距离优先', '销量优先', '价格']
+          : ['智能排序', '销量优先', '价格']
+
+          filterOptions.forEach((item) => {
+            display_report({
+              display_name: 'service_filter_items_display',
+              object_type: 'service',
+              extend: {
+                filter_items_name: item,
+              },
+            })
+          })
+        },
+        immediate: true, // 立即触发
+      },
+    },
   methods: {
     isFilterSelected (filterType) {
       return this.currentFilter === filterType
     },
     onSelectFilter (filterType) {
+
+      const filterTypeMap = new Map([
+        [1, '智能排序'],
+        [2, '距离优先'],
+        [3, '销量优先'],
+        [4, '价格升序'],
+        [5, '价格降序']
+      ])
+
+      action_report({
+        action_name: 'service_filter_items_click',
+        module_name: 'service',
+        extend: {
+          user_id: this.$dsBridge.call('getUserId', 'getUserId'),
+          filter_items_name: filterTypeMap.get(filterType)
+        },
+      })
+
       if (this.currentFilter === filterType) return
       this.currentFilter = filterType
       this.$emit('filterChange', this.currentFilter)
@@ -121,30 +170,33 @@ export default {
 
   &__item {
     flex: 1;
-    height: 60rpx;
+    height: 46rpx;
+    line-height: 46rpx;
     margin: 0 10rpx;
-    font-size: 26rpx;
+    font-size: 21rpx;
     font-weight: 400;
     color: #333333;
-    background-color: #f5f5f5;
-    line-height: 60rpx;
     text-align: center;
-    border-radius: 30rpx;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: all 0.3s;
+    background: #F7F7F7;
+    border-radius: 23rpx;
 
     &--active {
+      height: 46rpx;
       color: #fe2442;
       font-weight: 500;
-      background-color: #ffffff;
-      box-shadow: 0 0 10rpx rgba(0, 0, 0, 0.1);
+      font-size: 21rpx;
+      line-height: 46rpx;
+      text-align: center;
+      background-color: #FFEDED;
     }
   }
 
   &__label {
-    font-size: 26rpx;
+    font-size: 21rpx;
   }
 
   &__price-icon {

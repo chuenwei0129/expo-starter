@@ -1,241 +1,278 @@
 <template>
-  <view class="navigation-area">
-    <swiper
-      class="navigation-area__swiper"
-      :indicator-dots="false"
-      :duration="500"
-      :current="swiperIndex"
-      @change="handleSwiperChange"
-      :style="{ height: swiperHeight }"
-      circular
-    >
-      <swiper-item
-        v-for="(pageItems, pageIndex) in paginatedItems"
-        :key="pageIndex"
-        class="navigation-area__swiper-item"
-        :style="{ height: getSwiperItemHeight(pageIndex) }"
-      >
-        <view
-          class="navigation-area__swiper-item-row"
-          v-for="(row, rowIndex) in getRows(pageItems, pageIndex)"
-          :key="rowIndex"
-          :style="{
-            marginBottom:
-              rowIndex < getRows(pageItems, pageIndex).length - 1
-                ? rowMarginBottom
-                : '0rpx',
-          }"
-        >
-          <view
-            v-for="(item, itemIndex) in row"
-            :key="item.title"
-            class="navigation-area__swiper-item-content"
-            :style="{ width: itemWidthPercentage + '%' }"
-            @click="handleNavigationClick(item)"
-          >
-            <view class="navigation-area__image-wrapper">
-              <u-image
-                class="navigation-area__image"
-                :src="item.image"
-                mode="aspectFill"
-                width="85rpx"
-                height="85rpx"
-                radius="10rpx"
-                lazy-load
-                :alt="item.title"
-              />
-              <image
-                v-if="item.cornerIcon"
-                class="navigation-area__corner-icon"
-                :src="item.cornerIcon"
-                :alt="item.title"
-              />
-            </view>
-            <view class="navigation-area__swiper-item-name">
-              {{ item.title }}
-            </view>
-          </view>
-        </view>
-      </swiper-item>
-    </swiper>
-    <!-- 自定义指示器 -->
-    <view class="navigation-area__custom-indicator" v-if="showIndicatorDots">
-      <view
-        v-for="(page, index) in paginatedItems"
-        :key="index"
-        class="navigation-area__indicator-dot"
-        :class="{
-          'navigation-area__indicator-dot--active': index === swiperIndex,
-        }"
-      ></view>
+  <view class="page">
+    <view ref="header" class="header"> NavBar </view>
+    <!-- 下拉刷新动画 -->
+    <view v-if="isRefreshing" class="refresh-animation">
+      <image src="/static/refresh.gif" mode="aspectFit" class="gif" />
+      <text class="refresh-text">胖胖努力中...</text>
     </view>
+    <scroll-view
+      scroll-y
+      class="scroll-view"
+      :scroll-top="scrollTop"
+      @scroll="throttledScroll"
+      refresher-enabled
+      :refresher-triggered="isRefreshing"
+      @refresherrefresh="onRefresh"
+      @refresherrestore="onRestore"
+      refresher-default-style="none"
+      @scrolltolower="onScrollToLower"
+    >
+      <!-- 顶部内容 -->
+      <view ref="header" class="header"> 顶部内容 </view>
+
+      <!-- Tab部分 -->
+      <view
+        ref="tabContainer"
+        :class="['tab-container', { sticky: isSticky }]"
+        :style="stickyStyle"
+      >
+        <u-tabs
+          :list="tabs"
+          :current="activeTab"
+          @change="scrollToTab"
+        ></u-tabs>
+      </view>
+
+      <!-- 内容区域 -->
+      <view class="content">
+        <view v-for="(item, index) in list" :key="index" class="item">
+          {{ item }}
+        </view>
+      </view>
+
+      <!-- 上拉加载动画 -->
+      <view v-if="isLoading" class="loading-animation">
+        <image
+          src="https://frontend-cdn.chongpangpang.com/image/cpp-static/prod/ui/cpp_h5_loading.png"
+          mode="scaleToFill"
+          class="loading-gif"
+        />
+        <text class="loading-text">加载中...</text>
+      </view>
+
+      <!-- 数据到底提示 -->
+      <view v-if="isEnd" class="end-text">已经到底了喵</view>
+    </scroll-view>
   </view>
 </template>
 
 <script>
-const BASE_HEIGHT = 157 // 基础高度
-const ROW_MARGIN_BOTTOM = 24 // 行间距
-const ITEMS_PER_ROW = 5 // 每行数量
-const FIRST_PAGE_LIMIT = 5 // 第一页最大数量
-const MAX_ITEMS = 20 // 最大显示数量
+import { throttle } from 'lodash'
 
 export default {
-  name: 'NavigationArea',
-  props: {
-    list: {
-      type: Array,
-      default: () => [],
-    },
-  },
   data() {
     return {
-      swiperIndex: 0,
-      paginatedItems: [],
+      list: Array.from({ length: 30 }, (_, i) => `Item ${i + 1}`),
+      tabs: ['Tab 1', 'Tab 2', 'Tab 3'],
+      scrollTop: 0,
+      tabTop: 0,
+      isSticky: false,
+      activeTab: 0,
+      headerHeight: 0,
+      isRefreshing: false,
+      isLoading: false,
+      isEnd: false,
+      tabContainerHeight: 0,
     }
   },
   computed: {
-    itemWidthPercentage() {
-      return 100 / ITEMS_PER_ROW
-    },
-    showIndicatorDots() {
-      return this.paginatedItems.length > 1
-    },
-    rowMarginBottom() {
-      return `${ROW_MARGIN_BOTTOM}rpx`
-    },
-    swiperHeight() {
-      return this.getSwiperItemHeight(this.swiperIndex)
+    stickyStyle() {
+      if (this.isSticky) {
+        return {
+          transform: `translate3d(0, ${
+            this.scrollTop - this.headerHeight
+          }px, 0)`,
+          height: `${this.tabContainerHeight}px`,
+        }
+      }
+      return {}
     },
   },
-  watch: {
-    list: {
-      handler: 'paginateItems',
-      immediate: true,
-    },
+  mounted() {
+    this.calculateTabTop()
+    this.calculateHeaderHeight()
+    this.calculateTabContainerHeight()
   },
   methods: {
-    paginateItems() {
-      this.paginatedItems = []
-      for (
-        let i = 0;
-        i < this.list.length;
-        i += i === 0 ? FIRST_PAGE_LIMIT : MAX_ITEMS - FIRST_PAGE_LIMIT
-      ) {
-        const start = i
-        const end =
-          i === 0
-            ? FIRST_PAGE_LIMIT
-            : Math.min(this.list.length, i + (MAX_ITEMS - FIRST_PAGE_LIMIT))
-        this.paginatedItems.push(this.list.slice(start, end))
-      }
+    calculateTabTop() {
+      const query = uni.createSelectorQuery().in(this)
+      query
+        .select('.tab-container')
+        .boundingClientRect((res) => {
+          if (res) {
+            this.tabTop = res.top
+          }
+        })
+        .exec()
     },
-    getRows(pageItems, pageIndex) {
-      const rows = []
-      const isFirstPage = pageIndex === 0
-      const perRow = isFirstPage ? pageItems.length : ITEMS_PER_ROW // 第一页特殊处理
+    calculateHeaderHeight() {
+      const query = uni.createSelectorQuery().in(this)
+      query
+        .select('.header')
+        .boundingClientRect((res) => {
+          if (res) {
+            this.headerHeight = res.height
+          }
+        })
+        .exec()
+    },
+    calculateTabContainerHeight() {
+      const query = uni.createSelectorQuery().in(this)
+      query
+        .select('.tab-container')
+        .boundingClientRect((res) => {
+          if (res) {
+            this.tabContainerHeight = res.height
+          }
+        })
+        .exec()
+    },
+    onScroll(event) {
+      const { scrollTop } = event.detail
+      this.scrollTop = scrollTop
+      // 判断是否需要吸顶
+      this.isSticky = scrollTop >= this.headerHeight
 
-      for (let i = 0; i < pageItems.length; i += perRow) {
-        rows.push(pageItems.slice(i, i + perRow))
-      }
+      // 找到当前激活的 Tab
+      this.updateActiveTab()
+    },
+    throttledScroll: throttle(function (event) {
+      this.onScroll(event)
+    }, 500),
+    updateActiveTab() {
+      const itemEls = document.querySelectorAll('.item')
+      if (!itemEls.length) return
+      let activeIndex = 0
+      itemEls.forEach((itemEl, index) => {
+        const rect = itemEl.getBoundingClientRect()
+        if (rect.top <= this.tabTop + this.tabContainerHeight) {
+          activeIndex = index
+        }
+      })
+      const tabIndex = Math.floor(activeIndex / 10)
+      this.activeTab = Math.max(0, Math.min(tabIndex, this.tabs.length - 1))
+    },
+    scrollToTab(index) {
+      this.activeTab = index
+      this.scrollTop = this.tabTop
+    },
+    onRefresh() {
+      this.isRefreshing = true
+      // 模拟数据刷新
+      setTimeout(() => {
+        this.list = Array.from(
+          { length: 30 },
+          (_, i) => `Refreshed Item ${i + 1}`
+        )
+        this.isRefreshing = false
+        this.isEnd = false // 重置数据到底状态
+      }, 2000)
+    },
+    onRestore() {
+      this.isRefreshing = false
+    },
+    onScrollToLower() {
+      if (this.isLoading || this.isEnd) return // 防止重复加载
 
-      return rows
-    },
-    handleSwiperChange(e) {
-      const newIndex = e.detail.current
-      if (newIndex !== this.swiperIndex) {
-        // 只在页码变化时才更新高度
-        this.swiperIndex = newIndex
-      }
-    },
-    handleNavigationClick(item) {
-      console.log('🚀 ~ handleNavigationClick ~ item:', item)
-    },
-    // 计算每个 swiper-item 的高度, 改为计算属性
-    getSwiperItemHeight(pageIndex) {
-      if (!this.paginatedItems[pageIndex]) return `${BASE_HEIGHT}rpx`
-      const rows = this.getRows(
-        this.paginatedItems[pageIndex],
-        pageIndex
-      ).length
-      const height = BASE_HEIGHT * rows + (rows - 1) * ROW_MARGIN_BOTTOM
-      return `${height}rpx`
+      this.isLoading = true
+      // 模拟数据加载
+      setTimeout(() => {
+        const newItems = Array.from(
+          { length: 10 },
+          (_, i) => `New Item ${this.list.length + i + 1}`
+        )
+        this.list = [...this.list, ...newItems]
+        this.isLoading = false
+
+        // 假设数据加载到底
+        if (this.list.length >= 50) {
+          this.isEnd = true
+        }
+      }, 2000)
     },
   },
 }
 </script>
 
-<style lang="scss" scoped>
-$base-height: 157rpx;
-$row-margin-bottom: 24rpx;
-$indicator-dot-size: 12rpx;
-$active-indicator-dot-size: 24rpx;
-$indicator-opacity: 0.25;
+<style scoped>
+.page {
+  height: 100vh;
+}
+.scroll-view {
+  height: 100%;
+}
+.header {
+  height: 300px;
+  background-color: #f5f5f5;
+  text-align: center;
+  line-height: 200px;
+}
+.tab-container {
+  background-color: #fff;
+  z-index: 10;
+  transition: transform 0.2s ease-out, height 0.2s ease-out;
+}
 
-.navigation-area {
-  position: relative;
-  padding-bottom: 20rpx;
+.content {
+  padding: 10px;
+}
 
-  &__swiper {
-    width: 100%;
-  }
+.item {
+  margin: 10px 0;
+  background: #f9f9f9;
+  padding: 10px;
+  height: 40px;
+}
 
-  &__swiper-item {
-    display: flex;
-    flex-direction: column;
-  }
+/* 吸顶样式 */
+.sticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
 
-  &__swiper-item-row {
-    display: flex;
-    flex-wrap: nowrap;
-  }
+/* 下拉刷新动画 */
+.refresh-animation {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  padding-top: 40px; /* 添加顶部内边距，避免贴顶 */
+}
+.gif {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 10px;
+}
+.refresh-text {
+  text-align: center;
+  color: #666;
+}
 
-  &__swiper-item-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 16rpx;
-    padding-bottom: 16rpx;
-  }
+/* 上拉加载动画 */
+.loading-animation {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.loading-gif {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+.loading-text {
+  text-align: center;
+}
 
-  &__image-wrapper {
-    position: relative;
-  }
-
-  &__corner-icon {
-    position: absolute;
-    width: 42rpx;
-    height: 25rpx;
-    top: -8rpx;
-    left: 52rpx;
-  }
-
-  &__swiper-item-name {
-    margin-top: 8rpx;
-    font-size: 24rpx;
-  }
-
-  &__custom-indicator {
-    position: absolute;
-    bottom: 5rpx;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-  }
-
-  &__indicator-dot {
-    width: $indicator-dot-size;
-    height: $indicator-dot-size;
-    border-radius: 50%;
-    background-color: #1f1f1f;
-    opacity: $indicator-opacity;
-    margin: 0 12rpx;
-    transition: all 0.3s ease;
-
-    &--active {
-      opacity: 1;
-      width: $active-indicator-dot-size;
-      border-radius: $indicator-dot-size;
-    }
-  }
+/* 数据到底提示 */
+.end-text {
+  text-align: center;
+  padding: 20px;
+  color: #999;
 }
 </style>

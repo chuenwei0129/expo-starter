@@ -4,7 +4,6 @@
       class="component-area__list"
       :gutter="10"
     >
-      <!-- 根据子项数量动态设置列宽 -->
       <u-col
         v-for="(item, index) in list"
         :key="index"
@@ -12,13 +11,11 @@
         @click="handleClick(item.link)"
       >
         <view class="component-area__item">
-          <!-- 也可以设置容器高度为 maxImageHeight，然后动态计算图片样式-->
-          <!-- :style="imageStyles[index]" -->
-          <!-- 设置图片高度为 maxImageHeight -->
           <image
             :src="item.image"
-            :style="{ height: maxImageHeight + 'rpx' }"
+            :style="{ height: calculateImageHeight(item) + 'rpx', width: itemWidth + 'rpx' }"
             class="component-area__image"
+            mode="widthFix"
           />
         </view>
       </u-col>
@@ -27,6 +24,8 @@
 </template>
 
 <script>
+import { action_report } from '@/utils/track'
+
 export default {
   name: 'ComponentArea',
   props: {
@@ -39,30 +38,37 @@ export default {
     itemSpan () {
       return this.list.length > 0 ? 12 / this.list.length : 12
     },
-    // 计算最大图片高度，遍历 list 数组，找到最高的图片高度
-    maxImageHeight () {
-      const maxHeight = Math.max(...this.list.map((item) => item.imageHeight))
-      return maxHeight
+    // 每个 item 的宽度，减去 gutter 的影响
+    itemWidth () {
+      const totalWidth = 716 // 总宽度
+      const gutter = 10 // 间距
+      const columns = this.list.length
+      const totalGutter = columns > 1 ? (columns - 1) * gutter : 0
+      return (totalWidth - totalGutter) / columns
     },
-    // 计算每个图片的样式，根据图片的宽高比和最大高度动态设置样式
-    // imageStyles() {
-    //   return this.list.map((item) => {
-    //     const itemImageHeight = item.imageHeight
-    //     return {
-    //       width: 'calc(100% - 20rpx)', // 减去 padding
-    //       height: `${itemImageHeight}rpx`,
-    //       // maxWidth: `${aspectRatio * itemImageHeight}rpx`,
-    //       // maxHeight: `${this.maxImageHeight - 20}rpx`,
-    //       borderRadius: '16rpx',
-    //     }
-    //   })
-    // },
   },
   methods: {
     handleClick (link) {
+      action_report({
+        action_name: 'service_recommend_components_click',
+        module_name: 'service',
+        extend: {
+          user_id:   this.$dsBridge.call('getUserId', 'getUserId'),
+          recommend_name: link,
+        },
+      })
+
       this.$dsBridge.call('gotoPageThroughRoute', {
         page: `${link}`,
       })
+    },
+    // 根据图片的宽高比和当前宽度计算图片高度
+    calculateImageHeight (item) {
+      if (item.imageWidth && item.imageHeight) {
+        const aspectRatio = item.imageHeight / item.imageWidth
+        return this.itemWidth * aspectRatio
+      }
+      return 0 // 或者返回一个默认高度
     },
   },
 }
@@ -70,7 +76,7 @@ export default {
 
 <style scoped lang="scss">
 .component-area {
-  width: 96%;
+  width: 716rpx;
   margin: 0 auto;
   margin-bottom: 25rpx;
 }
@@ -84,7 +90,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f0f0f0;
+  // background-color: #f0f0f0;
   border-radius: 16rpx;
 }
 

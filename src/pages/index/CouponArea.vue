@@ -9,7 +9,7 @@
         <u-text
           v-if="list.length > 5"
           suffix-icon="play-right-fill"
-          icon-style="font-size: 20rpx; color: #999999;font-weight: 400;"
+          icon-style="font-size: 20rpx; color: #999999;font-weight: 400;margin-right: 18rpx;"
           color="#b2b3b5"
           size="25rpx"
           text="查看更多"
@@ -66,8 +66,9 @@ export default {
       })
     },
     handleViewMore () {
-      uni.navigateTo({
-        url: 'pagesC/mallOrderList/index?listIndex=4',
+    console.log('🚀 ~ handleViewMore ~ handleViewMore:', '触发 handleViewMore')
+      this.$dsBridge.call('gotoPageThroughRoute', {
+        page: `${window.location.origin}/crm-medical-h5/#/pagesC/mallOrderList/index?listIndex=4&transparentTopBar=1`,
       })
     },
     onSwiperChange (event) {
@@ -82,9 +83,9 @@ export default {
   background: #f7f8fc;
   border-radius: 23rpx;
   width: 719rpx;
-  height: 250rpx;
+  height: 267rpx;
   margin: 0 auto;
-  margin-bottom: 60rpx;
+  margin-bottom: 30rpx;
 }
 
 /* 标题区域样式 */
@@ -108,16 +109,18 @@ export default {
 
 /* Swiper 指示器样式 */
 .coupon-area__swiper /deep/ .uni-swiper-dot {
-  width: 24rpx; /* 长条宽度 */
-  height: 6rpx; /* 长条高度 */
-  border-radius: 6rpx; /* 圆角 */
-  background-color: #ddd;
-  margin: 0 6rpx; /* 间距 */
+  width: 12rpx; /* 长条宽度 */
+  height: 4rpx; /* 长条高度 */
+  border-radius: 4rpx; /* 圆角 */
+  background-color: #1f1f1f;
+  opacity: 0.25;
+  margin: 0 5rpx; /* 间距 */
   transition: all 0.3s ease; /* 添加过渡效果 */
 }
 
 .coupon-area__swiper /deep/ .uni-swiper-dot-active {
-  width: 32rpx; /* 激活状态加宽 */
-  background-color: #ff2342;
+  width: 15rpx; /* 激活状态加宽 */
+  background-color: #1f1f1f;
+  opacity: 1;
 }
 </style>

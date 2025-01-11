@@ -42,7 +42,7 @@
         <view class="product-card__price"> ￥{{ product.realPrice }} </view>
         <!-- 商品销量 -->
         <view class="product-card__sales">
-          销量 {{ product.saledStockQty || 0 }}
+          {{ product.saledStockQty ? `销量 ${product.saledStockQty}` : '' }}
         </view>
       </view>
     </view>
@@ -72,23 +72,18 @@ export default {
   },
   computed: {
     hasPromotion() {
-      return (
-        this.product.promotionTag &&
-        this.product.promotionTag.promotionId.length > 0
-      )
+      return this.product.promotionTag?.promotionId?.length > 0
     },
   },
 }
 </script>
 
 <style scoped lang="scss">
-// @import '@/utils/fn.scss';
+@import '@/utils/fn.scss';
 .product-card {
-  border-radius: 23rpx;
   display: flex;
   // 默认垂直布局
   flex-direction: column;
-  background-color: #fff;
 
   &--one {
     // 水平布局
@@ -117,7 +112,7 @@ export default {
     }
 
     product-card__info {
-      // @include ellipsis(208rpx);
+      @include ellipsis(208rpx);
     }
   }
 
@@ -129,7 +124,7 @@ export default {
 
   &__info {
     padding: 20rpx;
-    // @include ellipsis(352rpx);
+    @include ellipsis(352rpx);
   }
 
   &__name {
@@ -138,7 +133,7 @@ export default {
     color: #333333;
     line-height: 38rpx;
     text-align: left;
-    // @include ellipsis(352rpx);
+    @include ellipsis(352rpx);
   }
 
   &__promotion {

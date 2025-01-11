@@ -40,7 +40,7 @@ export default {
     },
   },
   computed: {
-    couponText () {
+    couponText() {
       switch (Number(this.rightType)) {
         case 201:
           return '商品免费券'
@@ -54,7 +54,7 @@ export default {
           return this.name
       }
     },
-    isCoupon () {
+    isCoupon() {
       return Number(this.promotionType) === 1
     },
   },

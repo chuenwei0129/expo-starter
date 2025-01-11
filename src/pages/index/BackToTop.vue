@@ -54,7 +54,7 @@ export default {
 /* TODO: 根据 UI 设计稿，调整样式 */
 .back-to-top {
   position: fixed;
-  bottom: 60px;
+  bottom: 70px;
   /* width: 60px;
   height: 60px;
   background-color: #ecdcd7; */

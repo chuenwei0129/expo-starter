@@ -1,6 +1,9 @@
 <template>
   <view class="coupon-card">
-    <image class="coupon-card__image" :src="coupon.imageUrl" />
+    <image
+      class="coupon-card__image"
+      :src="coupon.imageUrl"
+    />
 
     <view class="coupon-card__info">
       <view class="coupon-card__title">
@@ -16,7 +19,9 @@
         <template v-else-if="Number(coupon.daysRemaining) === 0">
           <span class="expired">{{ countdown }}</span>
         </template>
-        <template v-else> 异常情况 </template>
+        <template v-else>
+          异常情况
+        </template>
       </view>
       <view class="coupon-card__location">
         <u-text
@@ -24,14 +29,17 @@
           size="21rpx"
           bold
           color="#999999"
-          line-height="31rpx"
+          line-height="34rpx"
           icon-style="font-size: 21rpx; color: #999999"
           :text="coupon.shopName"
         />
       </view>
     </view>
 
-    <view class="coupon-card__action" @click="$emit('click', coupon)">
+    <view
+      class="coupon-card__action"
+      @click="$emit('click', coupon)"
+    >
       查看券码
     </view>
   </view>
@@ -47,31 +55,29 @@ export default {
     },
   },
   emits: ['click'],
-  data() {
+  data () {
     return {
       countdown: '', // 倒计时显示
       interval: null, // 定时器
     }
   },
-  mounted() {
+  mounted () {
     if (Number(this.coupon.daysRemaining) === 0) {
       this.startCountdown()
     }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     if (this.interval) {
       clearInterval(this.interval)
     }
   },
   methods: {
-    formatDate(dateString) {
+    formatDate (dateString) {
       const date = new Date(dateString.replace(/-/g, '/'))
       return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`
     },
-    startCountdown() {
-      const endTime = new Date(
-        this.coupon.verifyValidEndTime.replace(/-/g, '/')
-      ).getTime()
+    startCountdown () {
+      const endTime = new Date(this.coupon.verifyValidEndTime.replace(/-/g, '/')).getTime()
       this.interval = setInterval(() => {
         const now = new Date().getTime()
         const timeLeft = endTime - now
@@ -82,13 +88,11 @@ export default {
           return
         }
 
-        const hours = Math.floor(
-          (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        )
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
         const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
         const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000)
 
-        this.countdown = `${hours}:${minutes}:${seconds} 后失效`
+        this.countdown = `${hours} : ${minutes} : ${seconds} 后失效`
       }, 1000)
     },
   },
@@ -96,7 +100,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-// @import "@/utils/fn.scss";
+@import "@/utils/fn.scss";
 
 /* 卡片样式 */
 .coupon-card {
@@ -121,6 +125,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  height: 138rpx;
   overflow: hidden;
 }
 
@@ -128,15 +133,14 @@ export default {
   font-weight: 400;
   font-size: 29rpx;
   color: #1f1f1f;
-  // @include ellipsis(256rpx);
+  @include ellipsis(369rpx);
 }
 
 .coupon-card__expiry-date {
   font-weight: 400;
   font-size: 25rpx;
   color: #666666;
-  margin-top: 10rpx;
-  margin-bottom: 10rpx;
+  margin-bottom: 28rpx;
 
   .days-remaining {
     color: red;

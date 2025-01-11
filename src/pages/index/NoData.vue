@@ -34,7 +34,6 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 20rpx;
-  height: 100%;
 
   .no-data-image {
     width: 346rpx;

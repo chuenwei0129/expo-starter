@@ -1,16 +1,37 @@
 <template>
   <view>
-    <!-- 展示商品信息 -->
+    <!-- 分类标签 -->
+    <view
+      v-if="list.length"
+      class="sticky-container"
+    >
+      <FilterTabs
+        :list="tabList"
+        @onSwitch="onSwitchTab"
+      />
+      <FilterOptions
+        :is-show-distance="isShowDistance"
+        @filterChange="onFilterChange"
+      />
+    </view>
     <view>
       <ProductList
         v-if="products.length"
         :goods="formattedProducts"
-        class="product-list"
-      />
-      <view v-if="isFinished" class="last-container"> 已经到底啦喵～ </view>
+        :is-recommend="params.categoryId === 0"
+      >
+        <template #bottom>
+          <view
+            v-if="isFetched && isFinished"
+            class="last-container"
+          >
+            已经到底啦喵～
+          </view>
+        </template>
+      </ProductList>
       <NoData
         v-else-if="isFetched && !products.length"
-        :is-show-more="false"
+        style="height: 80vh"
         img="https://frontend-cdn.chongpangpang.com/image/medical-mp/chat/empty-sheet-tag.png"
       />
     </view>
@@ -18,28 +39,33 @@
 </template>
 
 <script>
+import FilterTabs from './FilterTabs.vue'
+import FilterOptions from './FilterOptions.vue'
 import ProductList from './ProductList.vue'
-import NoData from '@/components/noData/index.vue'
+import NoData from './NoData.vue'
 
-import { fetchProductListAPI } from './api/mockAPI'
-// import {
-//   fetchRecommendClassifyAPI,
-//   fetchProductListAPI,
-// } from './api/inStoreService'
+// import { fetchRecommendClassifyAPI, fetchProductListAPI } from './api/mockAPI'
+import { fetchRecommendClassifyAPI, fetchProductListAPI } from './api/inStoreService'
 
 export default {
   name: 'ProductFeeds',
   components: {
+    FilterTabs,
+    FilterOptions,
     ProductList,
     NoData,
   },
   props: {
-    locationInfo: {
+    location: {
       type: Object,
       default: () => ({}),
     },
+    isShowDistance: {
+      type: Boolean,
+      default: false,
+    }
   },
-  data() {
+  data () {
     return {
       list: [],
       products: [], // 新增：商品列表数据
@@ -58,7 +84,7 @@ export default {
     }
   },
   computed: {
-    formattedProducts() {
+    formattedProducts () {
       return this.products.map((e) => {
         const salePrice =
           e.promotionTag !== null ? e.promotionPrice : e.realPrice
@@ -79,32 +105,31 @@ export default {
         }
       })
     },
-    tabList() {
+    tabList () {
       return [{ id: 0, name: '推荐' }, ...this.list]
     },
   },
-  async mounted() {
+  async mounted () {
     await this.fetchRecommendClassifyData()
     await this.fetchProductListData()
   },
   methods: {
-    async fetchRecommendClassifyData() {
+    async fetchRecommendClassifyData () {
       const resp = await fetchRecommendClassifyAPI()
-      console.log('🚀 ~ fetchRecommendClassifyData ~ resp:', resp)
-      this.list = resp.data.data.filter((item) => item.recommendType === 1)
+      this.list = resp.data.data || []
     },
-    async fetchProductListData() {
+    async fetchProductListData () {
       if (this.isFinished) {
         return
       }
-      const { cityCode, lon: lng, lat } = this.locationInfo
+      const { cityCode, lon, lat } = this.location
       this.isFetched = false
       const resp = await fetchProductListAPI({
         pageNum: this.params.pageNum,
         pageSize: 10,
         cityCode,
-        lng,
-        lat,
+        lng: lon ? lon : undefined,
+        lat: lat ? lat : undefined,
         // 传入类目 id
         categoryIds: this.params.categoryId
           ? [this.params.categoryId]
@@ -113,9 +138,11 @@ export default {
         fromChannel: 'APP',
       })
       this.isFetched = true
+      // uni.$emit('skeleton-refresh', false) // 关闭骨架屏
       console.log('🚀 ~ fetchProductListData ~ resp:', resp)
       this.totalCount = Number(resp.data.data.totalCount)
-      this.products = this.products.concat(resp.data.data.data || [])
+      const products = resp.data.data.data || []
+      this.products = this.products.concat(products)
       if (this.totalCount > this.products.length) {
         // 还有数据，继续分页请求
         this.params.pageNum++
@@ -123,22 +150,23 @@ export default {
         this.isFinished = true
       }
     },
-    onSwitchTab(tabIndex) {
+    onSwitchTab (tabIndex) {
       console.log('🚀 ~ onSwitchTab ~ tabIndex:', tabIndex)
-      if (this.params.categoryId === tabIndex) {
+      if (String(this.params.categoryId) === tabIndex.id) {
         return
       }
-      this.params.categoryId = tabIndex
+
+      this.params.categoryId = tabIndex.id
       this.reset()
       this.fetchProductListData()
     },
-    onFilterChange(filterType) {
+    onFilterChange (filterType) {
       console.log('🚀 ~ onFilterChange ~ filterType:', filterType)
       this.params.sortType = filterType
       this.reset()
       this.fetchProductListData() // 重新获取数据
     },
-    reset() {
+    reset () {
       this.params.pageNum = 1 // 重置页码
       this.isFinished = false
       this.products = []
@@ -160,12 +188,10 @@ export default {
   line-height: 33rpx;
   padding-bottom: 40rpx;
 }
-
 .sticky-container {
   position: sticky;
   top: 0;
   z-index: 999;
   background-color: #fff;
-  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
 }
 </style>
