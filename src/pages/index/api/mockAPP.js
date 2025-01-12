@@ -3,8 +3,6 @@ const mockAPP = {
   // 模拟调用方法的存储
   registeredCallbacks: {},
 
-  // 422179060978331648
-
   // 模拟定位数据
   locationData: {
     address: '北京市海淀区中关村大街27号',
@@ -19,6 +17,7 @@ const mockAPP = {
   },
 
   permission: 1,
+  userId: 'mock_user_id_123', // 模拟用户ID
 
   // 模拟 $dsBridge.call
   call(method, args, callback) {
@@ -34,26 +33,53 @@ const mockAPP = {
 
       gotoLocationPermissionSet: () => {
         // 模拟跳转定位权限设置
-        setTimeout(() => {
-          console.log('模拟跳转到定位权限设置...')
-          this.permission = 1
-        }, 2000)
+        console.log('模拟跳转到定位权限设置...')
+        this.permission = 1
       },
 
       startOnceLocation: () => {
         // 模拟单次定位
+        console.log('定位完成:', this.locationData)
         setTimeout(() => {
-          console.log('定位完成:', this.locationData)
           this.invokeRegisteredCallback('locationCallback', this.locationData)
-        }, 2000)
+        }, 3000)
+      },
+
+      getUserId: () => {
+        // 模拟获取用户ID
+        console.log(`获取用户ID: ${this.userId}`)
+        return this.userId
+      },
+
+      getAddressInfo: () => {
+        // 模拟获取地址信息
+        console.log('获取地址信息:', this.locationData)
+        if (this.permission === 0) return null
+        return JSON.stringify(this.locationData)
+      },
+
+      closeCurrentWebview: () => {
+        // 模拟关闭当前webview
+        console.log('模拟关闭当前WebView')
+        return 'WebView关闭成功'
+      },
+
+      gotoPageThroughRoute: (route) => {
+        console.log('🚀 ~ call ~ route:', route)
+        return `跳转到路由: ${route}`
       },
     }
 
     const handler = methodHandlers[method]
     if (handler) {
-      handler()
+      const result = handler()
+      if (callback && method !== 'checkLocationPermission') {
+        callback(result)
+      }
+      return result
     } else {
       console.warn(`未实现的方法: ${method}`)
+      return `未实现的方法: ${method}`
     }
   },
 

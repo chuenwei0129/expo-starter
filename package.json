@@ -70,6 +70,7 @@
     "@vue/shared": "^3.0.0",
     "core-js": "^3.8.3",
     "flyio": "^0.6.2",
+    "lodash-es": "^4.17.21",
     "sass": "^1.83.0",
     "sass-loader": "^16.0.4",
     "uview-ui": "^2.0.38",

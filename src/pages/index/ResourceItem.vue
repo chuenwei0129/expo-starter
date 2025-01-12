@@ -40,6 +40,7 @@ import { action_report } from '@/utils/track'
 
 export default {
   name: 'ResourceItem',
+  inject: ['userId'],
   components: {
     ResourceCard,
   },
@@ -54,31 +55,35 @@ export default {
     },
   },
   computed: {
-    filterList () {
+    filterList() {
       return this.resource.resList.slice(0, 3)
     },
   },
   methods: {
-    handleViewMore () {
+    handleViewMore() {
       console.log('🚀 ~ handleViewMore ~ item:', this.resource)
       console.log(this.$props.location)
       uni.navigateTo({
         url: `/pagesB/takeBathPage/index?resource=${this.resource.id}&cityCode=${this.location.cityCode}&lon=${this.location.lon}&lat=${this.location.lat}`,
       })
     },
-    handleClickProduct (item) {
+    handleClickProduct(item) {
       console.log('🚀 ~ handleClickProduct ~ item:', item)
-        action_report({
-          action_name: 'service_recommend_resource_click',
-          module_name: 'service',
-          extend: {
-            user_id: this.$dsBridge.call('getUserId', 'getUserId'),
-            recommend_name: item.name,
-          },
-        })
+      action_report({
+        action_name: 'service_recommend_resource_click',
+        module_name: 'service',
+        extend: {
+          user_id: this.userId,
+          recommend_name: item.name,
+        },
+      })
       // TODO: 跳转到商品详情页面
       this.$dsBridge.call('gotoPageThroughRoute', {
-        page: `${window.location.origin}/crm-medical-h5/#/pagesC/goodsServiceDetail/index?itemId=${item.itemId}&skuId=${item.skuId || ''}&shopId=${item.shopId}&transparentTopBar=1`,
+        page: `${
+          window.location.origin
+        }/crm-medical-h5/#/pagesC/goodsServiceDetail/index?itemId=${
+          item.itemId
+        }&skuId=${item.skuId || ''}&shopId=${item.shopId}&transparentTopBar=1`,
       })
     },
   },

@@ -1,16 +1,10 @@
 <template>
   <view
     v-if="filterList.length > 0"
-    style="background: linear-gradient(to bottom, #FFFFFF, #F7F8FC);"
+    style="background: linear-gradient(to bottom, #ffffff, #f7f8fc)"
   >
-    <view
-      v-for="(item, index) in filterList"
-      :key="index"
-    >
-      <ResourceItem
-        :resource="item"
-        :location="location"
-      />
+    <view v-for="(item, index) in filterList" :key="index">
+      <ResourceItem :resource="item" :location="location" />
     </view>
   </view>
 </template>
@@ -32,13 +26,13 @@ export default {
       type: Object,
       required: true,
     },
-
   },
   computed: {
     // 商品数量 = 0 则不展示该区域: 过滤掉商品数量为 0 的列表项
-    filterList () {
+    filterList() {
       // 展示前 2 个商品数量不为 0 的资源位
-      return this.list.filter((item) => item.resList !== null).slice(0, 2)
+      // return this.list.filter((item) => item.resList !== null).slice(0, 2)
+      return this.list.filter((item) => item.resList !== null)
     },
   },
 }

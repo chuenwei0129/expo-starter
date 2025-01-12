@@ -10,7 +10,7 @@
         ]"
         @click="onSelectFilter(filterTypes.INTELLIGENT)"
       >
-        智能排序
+        综合排序
       </view>
       <view
         v-if="isShowDistance"
@@ -48,9 +48,7 @@
           )
         "
       >
-        <view class="filter-options__label">
-          价格
-        </view>
+        <view class="filter-options__label"> 价格 </view>
         <view :class="priceIconCssClass" />
       </view>
     </view>
@@ -62,6 +60,7 @@ import { action_report, display_report } from '@/utils/track'
 
 export default {
   name: 'FilterOptions',
+  inject: ['userId'],
   props: {
     isShowDistance: {
       type: Boolean,
@@ -69,11 +68,11 @@ export default {
     },
   },
   emits: ['filterChange'],
-  data () {
+  data() {
     return {
       currentFilter: 1, // 当前选中的筛选类型
       filterTypes: {
-        INTELLIGENT: 1, // 智能排序
+        INTELLIGENT: 1, // 综合排序
         DISTANCE: 2, // 距离优先
         SALES: 3, // 销量优先
         PRICE_ASC: 4, // 价格升序
@@ -82,16 +81,16 @@ export default {
     }
   },
   computed: {
-    currentPriceType () {
+    currentPriceType() {
       return this.currentFilter
     },
-    isPriceFilterActive () {
+    isPriceFilterActive() {
       return (
         this.currentFilter === this.filterTypes.PRICE_ASC ||
         this.currentFilter === this.filterTypes.PRICE_DESC
       )
     },
-    priceIconCssClass () {
+    priceIconCssClass() {
       if (this.currentFilter === this.filterTypes.PRICE_ASC) {
         return 'filter-options__price-icon filter-options__price-icon--asc'
       } else if (this.currentFilter === this.filterTypes.PRICE_DESC) {
@@ -102,46 +101,45 @@ export default {
   },
   watch: {
     isShowDistance: {
-      handler (newVal, oldVal) {
+      handler(newVal, oldVal) {
         if (newVal === oldVal) return // 检查是否变化
 
         const filterOptions = newVal
-          ? ['智能排序', '距离优先', '销量优先', '价格']
-          : ['智能排序', '销量优先', '价格']
+          ? ['综合排序', '距离优先', '销量优先', '价格']
+          : ['综合排序', '销量优先', '价格']
 
-          filterOptions.forEach((item) => {
-            display_report({
-              display_name: 'service_filter_items_display',
-              object_type: 'service',
-              extend: {
-                filter_items_name: item,
-              },
-            })
+        filterOptions.forEach((item) => {
+          display_report({
+            display_name: 'service_filter_items_display',
+            object_type: 'service',
+            extend: {
+              filter_items_name: item,
+            },
           })
-        },
-        immediate: true, // 立即触发
+        })
       },
+      immediate: true, // 立即触发
     },
+  },
   methods: {
-    isFilterSelected (filterType) {
+    isFilterSelected(filterType) {
       return this.currentFilter === filterType
     },
-    onSelectFilter (filterType) {
-
+    onSelectFilter(filterType) {
       const filterTypeMap = new Map([
-        [1, '智能排序'],
+        [1, '综合排序'],
         [2, '距离优先'],
         [3, '销量优先'],
         [4, '价格升序'],
-        [5, '价格降序']
+        [5, '价格降序'],
       ])
 
       action_report({
         action_name: 'service_filter_items_click',
         module_name: 'service',
         extend: {
-          user_id: this.$dsBridge.call('getUserId', 'getUserId'),
-          filter_items_name: filterTypeMap.get(filterType)
+          user_id: this.userId,
+          filter_items_name: filterTypeMap.get(filterType),
         },
       })
 
@@ -181,7 +179,7 @@ export default {
     justify-content: center;
     align-items: center;
     transition: all 0.3s;
-    background: #F7F7F7;
+    background: #f7f7f7;
     border-radius: 23rpx;
 
     &--active {
@@ -191,7 +189,7 @@ export default {
       font-size: 21rpx;
       line-height: 46rpx;
       text-align: center;
-      background-color: #FFEDED;
+      background-color: #ffeded;
     }
   }
 

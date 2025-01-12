@@ -1,130 +1,131 @@
 <template>
-  <view>
-    <!-- 滚动区域 -->
+  <view class="page">
     <scroll-view
-      :scroll-y="true"
+      scroll-y
+      class="scroll-view"
       :scroll-top="scrollTop"
-      @scroll="handleScroll"
-      style="height: 100vh"
+      @scroll="onScroll"
     >
-      <view
-        v-for="(section, index) in sections"
-        :key="index"
-        :ref="'section-' + index"
-        class="content-section"
-      >
-        <view class="section-title">{{ section.title }}</view>
-        <view class="section-content">{{ section.content }}</view>
-      </view>
+      <!-- 顶部内容 -->
+      <view ref="header" class="header"> 顶部内容 </view>
 
-      <view
-        v-for="(section, index) in sections"
-        :key="index"
-        :ref="'section-' + index"
-        class="content-section"
-      >
-        <view class="section-title">{{ section.title }}</view>
-        <view class="section-content">{{ section.content }}</view>
-      </view>
-      <!-- Tab 区域 -->
-      <view class="tab-container" ref="tabContainer">
+      <!-- Tab部分 -->
+      <view ref="tabContainer" class="tab-container">
         <view
           v-for="(tab, index) in tabs"
           :key="index"
-          :class="['tab-item', { active: activeTab === index }]"
-          @click="handleTabClick(index)"
+          class="tab"
+          :class="{ active: activeTab === index }"
+          @tap="scrollToTab(index)"
         >
-          {{ tab.name }}
+          {{ tab }}
         </view>
       </view>
 
-      <view
-        v-for="(section, index) in sections"
-        :key="index"
-        :ref="'section-' + index"
-        class="content-section"
-      >
-        <view class="section-title">{{ section.title }}</view>
-        <view class="section-content">{{ section.content }}</view>
-      </view>
-
       <!-- 内容区域 -->
-      <view
-        v-for="(section, index) in sections"
-        :key="index"
-        :ref="'section-' + index"
-        class="content-section"
-      >
-        <view class="section-title">{{ section.title }}</view>
-        <view class="section-content">{{ section.content }}</view>
+      <view class="content">
+        <view v-for="(item, index) in list" :key="index" class="item">
+          {{ item }}
+        </view>
       </view>
     </scroll-view>
   </view>
 </template>
+
 <script>
 export default {
   data() {
     return {
-      tabs: [{ name: 'Tab 1' }, { name: 'Tab 2' }, { name: 'Tab 3' }],
-      sections: [
-        { title: 'Section 1', content: 'Content of Section 1' },
-        { title: 'Section 2', content: 'Content of Section 2' },
-        { title: 'Section 3', content: 'Content of Section 3' },
-      ],
-      activeTab: 0, // 当前激活的 tab 索引
-      scrollTop: 0, // 滚动位置
+      list: Array.from({ length: 30 }, (_, i) => `Item ${i + 1}`),
+      tabs: ['Tab 1', 'Tab 2', 'Tab 3'],
+      scrollTop: 0, // 当前滚动位置
+      tabTop: 0, // Tab 距离顶部的实际位置
+      activeTab: 0, // 当前激活的 Tab
+      headerHeight: 0,
+      contentItemHeight: 40, // 假设每个 item 高度为 40
     }
   },
+  mounted() {
+    this.calculateTabTop()
+    this.calculateHeaderHeight()
+  },
   methods: {
-    handleTabClick(index) {
-      this.activeTab = index
-      const section = this.$refs[`section-${index}`]
-      if (section && section[0]) {
-        const top = section[0].offsetTop // 获取目标锚点位置
-        this.scrollTop = top
-      }
-    },
-    handleScroll(event) {
-      const scrollTop = event.detail.scrollTop
-
-      // 自动切换 Tab
-      for (let i = 0; i < this.sections.length; i++) {
-        const section = this.$refs[`section-${i}`]
-        if (section && section[0]) {
-          const rect = section[0].getBoundingClientRect()
-          if (rect.top >= 0 && rect.top < 100) {
-            this.activeTab = i
-            break
+    calculateTabTop() {
+      const query = uni.createSelectorQuery().in(this)
+      query
+        .select('.tab-container')
+        .boundingClientRect((res) => {
+          if (res) {
+            this.tabTop = res.top
           }
-        }
-      }
+        })
+        .exec()
+    },
+    calculateHeaderHeight() {
+      const query = uni.createSelectorQuery().in(this)
+      query
+        .select('.header')
+        .boundingClientRect((res) => {
+          if (res) {
+            this.headerHeight = res.height
+          }
+        })
+        .exec()
+    },
+    onScroll(event) {
+      const { scrollTop } = event.detail
+      this.scrollTop = scrollTop
+      this.updateActiveTab()
+    },
+    updateActiveTab() {
+      const currentTab = Math.floor(
+        (this.scrollTop - this.headerHeight) / (this.contentItemHeight * 10)
+      )
+      this.activeTab = Math.max(0, Math.min(currentTab, this.tabs.length - 1))
+    },
+    scrollToTab(index) {
+      this.activeTab = index
+      // 计算滚动位置，滚动到 Tab 顶部
+      this.scrollTop = this.tabTop
     },
   },
 }
 </script>
+
 <style scoped>
+.page {
+  height: 100vh;
+}
+.scroll-view {
+  height: 100%;
+}
+.header {
+  height: 200px;
+  background-color: #f5f5f5;
+  text-align: center;
+  line-height: 200px;
+}
 .tab-container {
-  display: flex;
   background-color: #fff;
   z-index: 10;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  position: sticky;
-  top: 0;
+  display: flex;
 }
-.tab-item {
-  flex: 1;
+.tab {
+  padding: 10px;
   text-align: center;
+  border-bottom: 2px solid transparent;
+  flex: 1;
+}
+.tab.active {
+  border-bottom-color: #007aff;
+}
+.content {
   padding: 10px;
-  cursor: pointer;
 }
-.tab-item.active {
-  font-weight: bold;
-  color: #007aff;
-  border-bottom: 2px solid #007aff;
-}
-.content-section {
-  padding: 20px;
-  border-bottom: 1px solid #ddd;
+.item {
+  margin: 10px 0;
+  background: #f9f9f9;
+  padding: 10px;
+  height: 40px;
 }
 </style>

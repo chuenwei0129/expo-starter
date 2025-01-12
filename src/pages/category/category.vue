@@ -1,80 +1,107 @@
 <template>
-  <view>
-    <u-tabs
-      :list="list"
-      lineWidth="40"
-      :current="current"
-      @change="tabChange"
-    ></u-tabs>
-    <swiper
-      class="scroll-view-height"
-      @change="swipeIndex"
-      :current="current"
-      :duration="300"
+  <view class="page">
+    <scroll-view
+      scroll-y
+      class="scroll-view"
+      :scroll-top="scrollTop"
+      @scroll="onScroll"
     >
-      <swiper-item>
-        <scroll-view scroll-y="true" class="scroll-view-height list-content">
-          <view class="list-item" v-for="(item, index) in 20" :key="'A' + index"
-            >tab1- {{ index }}</view
-          >
-        </scroll-view>
-      </swiper-item>
-      <swiper-item>
-        <scroll-view scroll-y="true" class="scroll-view-height list-content">
-          <view class="list-item" v-for="(item, index) in 20" :key="'B' + index"
-            >tab2- {{ index }}</view
-          >
-        </scroll-view>
-      </swiper-item>
-    </swiper>
-    <tabbar :current="2"></tabbar>
+      <!-- 顶部内容 -->
+      <view ref="header" class="header"> 顶部内容 </view>
+
+      <!-- Tab部分 -->
+      <view ref="tabContainer" class="tab-container">
+        <view
+          v-for="(tab, index) in tabs"
+          :key="index"
+          class="tab"
+          @tap="scrollToTab()"
+        >
+          {{ tab }}
+        </view>
+      </view>
+
+      <!-- 内容区域 -->
+      <view class="content">
+        <view v-for="(item, index) in list" :key="index" class="item">
+          {{ item }}
+        </view>
+      </view>
+    </scroll-view>
   </view>
 </template>
 
 <script>
 export default {
-  name: 'index',
   data() {
     return {
-      // swiper索引
-      current: 0,
-      list: [
-        {
-          name: 'tab1',
-        },
-        {
-          name: 'tab2',
-        },
-      ],
+      list: Array.from({ length: 30 }, (_, i) => `Item ${i + 1}`),
+      tabs: ['Tab 1', 'Tab 2', 'Tab 3'],
+      scrollTop: 0, // 当前滚动位置
+      tabTop: 0, // Tab 距离顶部的实际位置
     }
   },
+  mounted() {
+    this.calculateTabTop()
+  },
   methods: {
-    swipeIndex(index) {
-      // 获得swiper切换后的current索引
-      this.current = index.detail.current
+    calculateTabTop() {
+      const query = uni.createSelectorQuery().in(this)
+      query
+        .select('.tab-container')
+        .boundingClientRect((res) => {
+          if (res) {
+            this.tabTop = res.top
+          }
+        })
+        .exec()
     },
-    tabChange(data) {
-      this.current = data.index
+    onScroll(event) {
+      const { scrollTop } = event.detail
+      this.scrollTop = scrollTop
+    },
+    scrollToTab() {
+      // 计算滚动位置，滚动到 Tab 顶部
+      this.scrollTop = this.tabTop
     },
   },
 }
 </script>
 
-<style scoped lang="scss">
-.scroll-view-height {
-  /* 页面高度减去包含状态栏、标题、tab组件的高度 */
-  height: calc(100vh - var(--status-bar-height) - 178rpx);
+<style scoped>
+.page {
+  height: 100vh;
 }
-
-.list-content {
-  background-color: #f4f4f4;
+.scroll-view {
+  height: 100%;
 }
-
-.list-item {
-  height: 100rpx;
-  line-height: 100rpx;
+.header {
+  height: 800px;
+  background-color: #f5f5f5;
   text-align: center;
-  margin: 4rpx 0;
-  background-color: #ffffff;
+  line-height: 200px;
+}
+.tab-container {
+  background-color: #fff;
+  z-index: 10;
+  display: flex;
+}
+.tab {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 2px solid transparent;
+  flex: 1;
+}
+.tab.active {
+  border-bottom-color: #007aff;
+}
+.content {
+  padding: 10px;
+}
+.item {
+  margin: 10px 0;
+  background: #f9f9f9;
+  padding: 10px;
+  height: 40px;
 }
 </style>

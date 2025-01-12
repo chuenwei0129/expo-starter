@@ -1,12 +1,6 @@
 <template>
-  <view
-    class="cart-button"
-    @click="handleClick"
-  >
-    <view
-      v-if="cartItemCount"
-      class="cart-button__badge"
-    >
+  <view class="cart-button" @click="handleClick">
+    <view v-if="cartItemCount" class="cart-button__badge">
       <u-icon
         v-if="cartItemCount > 99"
         name="more-dot-fill"
@@ -18,20 +12,18 @@
       </text>
     </view>
 
-    <i
-      class="iconfont icon-a-ShoppingCart"
-      style="font-size: 46rpx"
-    />
+    <i class="iconfont icon-a-ShoppingCart" style="font-size: 46rpx" />
   </view>
 </template>
 
 <script>
-import { GET_CART_TOTAL } from '@/api/mallv2'
+// import { GET_CART_TOTAL } from '@/api/mallv2'
 import { action_report } from '@/utils/track'
 
 export default {
   name: 'CartButton',
-  data () {
+  inject: ['userId'],
+  data() {
     return {
       cartItemCount: 0,
     }
@@ -41,14 +33,13 @@ export default {
   // },
 
   methods: {
-    handleClick () {
-
+    handleClick() {
       action_report({
         action_name: 'service_shoppingcart_click',
         module_name: 'service',
         extend: {
-            user_id:   this.$dsBridge.call('getUserId', 'getUserId'),
-          },
+          user_id: this.userId,
+        },
       })
 
       this.$dsBridge.call('gotoPageThroughRoute', {
@@ -56,13 +47,14 @@ export default {
       })
     },
     //获取购物车数量
-    async getCartNum () {
-      const res = await GET_CART_TOTAL({
-        checked: false,
-        cartType: 1,
-      })
-      const { data } = res.data
-      this.cartItemCount = data
+    async getCartNum() {
+      // const res = await GET_CART_TOTAL({
+      //   checked: false,
+      //   cartType: 1,
+      // })
+      // const { data } = res.data
+      // this.cartItemCount = data
+      this.cartItemCount = 100
     },
   },
 }

@@ -11,10 +11,7 @@
         :src="picture"
         mode="aspectFill"
       />
-      <view
-        v-if="shopName"
-        class="goods-address"
-      >
+      <view v-if="shopName" class="goods-address">
         {{ distance ? `${distance} | ${shopName}` : shopName }}
       </view>
     </view>
@@ -52,11 +49,7 @@
         paddingRight: needMargin ? '17rpx' : '0',
       }"
     >
-      <view
-        v-if="hasDeliverTag"
-        class="tag-item"
-        style="flex-shrink: 0"
-      >
+      <view v-if="hasDeliverTag" class="tag-item" style="flex-shrink: 0">
         <DeliveryTag :text-size="21" />
       </view>
       <view
@@ -66,7 +59,7 @@
           hasDeliverTag ? 'small-promotion-tag' : 'promotion-tag',
         ]"
       >
-        <PromotionTag
+        <!-- <PromotionTag
           :text-size="21"
           line-h="31rpx"
           :icon-size="21"
@@ -76,7 +69,7 @@
           :rule="promotion.promotionRule"
           :promotion-type="promotion.promotionType"
           :is-text-overflow="true"
-        />
+        /> -->
       </view>
     </view>
     <view
@@ -94,18 +87,11 @@
         :sale-price-integer-font-size="38"
         show-discounts
       />
-      <view
-        v-if="canAddCart"
-        class="add-cart-icon"
-        @click.stop="handleAddCart"
-      >
+      <view v-if="canAddCart" class="add-cart-icon" @click.stop="handleAddCart">
         <i class="iconfont icon-a-ShoppingCart" />
       </view>
-      <view
-        v-else
-        class="sold-stock"
-      >
-        {{ soldStockTag ? `销量${soldStockTag}` : "" }}
+      <view v-else class="sold-stock">
+        {{ soldStockTag ? `销量${soldStockTag}` : '' }}
       </view>
     </view>
   </view>
@@ -114,14 +100,15 @@
 <script>
 import GoodsPrice from '@/components/goodsPrice/index.vue'
 import { display_report } from '@/utils/track'
-import DeliveryTag from '@/components/goodsCard/components/deliveryTag.vue'
-import { addCart } from '@/api/cart'
-import PromotionTag from '@/components/goodsCard/components/promotionTag.vue'
+// import DeliveryTag from '@/components/goodsCard/components/deliveryTag.vue'
+// import { addCart } from '@/api/cart'
+// import PromotionTag from '@/components/goodsCard/components/promotionTag.vue'
 export default {
   name: 'GoodsCard',
+  inject: ['userId'],
   components: {
-    PromotionTag,
-    DeliveryTag,
+    // PromotionTag,
+    // DeliveryTag,
     GoodsPrice,
   },
   props: {
@@ -160,85 +147,82 @@ export default {
       type: Object,
       default: () => ({
         backgroundColor: 'white',
-      })
+      }),
     },
     isRecommend: {
       type: Boolean,
       default: false,
     },
   },
-  data () {
+  data() {
     return {}
   },
   computed: {
-    picture () {
+    picture() {
       return this.goods.picture
     },
-    title () {
+    title() {
       return this.goods.title
     },
-    goodId () {
+    goodId() {
       return this.goods.id
     },
-    salePrice () {
+    salePrice() {
       return this.goods.salePrice
     },
-    originPrice () {
+    originPrice() {
       return this.goods.originPrice
     },
-    skuTag () {
+    skuTag() {
       return this.goods.skuTag
     },
-    newUserTag () {
+    newUserTag() {
       return this.goods.newuserTag
     },
-    promotion () {
+    promotion() {
       return this.goods.promotion
     },
-    hasDeliverTag () {
+    hasDeliverTag() {
       return this.skuTag === 2
     },
-    hasPromotion () {
-      return (
-        this.goods.promotion && this.goods.promotion?.promotionId?.length > 0
-      )
+    hasPromotion() {
+      return this.goods.promotion?.promotionId?.length > 0
     },
-    soldStockTag () {
+    soldStockTag() {
       return this.goods.soldStockTag
     },
-    distance () {
-       return this.goods.distance
+    distance() {
+      return this.goods.distance
     },
-    shopName () {
-       return this.goods.shopName && this.goods.shopName.slice(0, 14)
-    }
+    shopName() {
+      return this.goods.shopName && this.goods.shopName.slice(0, 14)
+    },
   },
-  mounted () {
-
+  mounted() {
     if (this.isRecommend) {
       display_report({
-      display_name: 'service_recommend_feedscommodity_display',
-      object_type: 'service',
-      extend: {
-          user_id: this.$dsBridge.call('getUserId', 'getUserId'),
+        display_name: 'service_recommend_feedscommodity_display',
+        object_type: 'service',
+        extend: {
+          user_id: this.userId,
           commodity_name: this.goods.title,
-          commodity_id: this.goods.goodId
+          commodity_id: this.goods.goodId,
         },
       })
     } else {
-        display_report({
+      display_report({
         display_name: 'service_category_feedscommodity_display',
         object_type: 'service',
         extend: {
-          user_id: this.$dsBridge.call('getUserId', 'getUserId'),
+          user_id: this.userId,
           commodity_name: this.goods.title,
-          commodity_id: this.goods.goodId
+          commodity_id: this.goods.goodId,
         },
       })
     }
   },
   methods: {
-    async handleAddCart () {
+    async handleAddCart() {
       uni.$u.debounce(async () => {
         const itemData = {
           cartType: 1,

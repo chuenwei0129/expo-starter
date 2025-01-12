@@ -1,5 +1,5 @@
 uni.addInterceptor({
-  returnValue (res) {
+  returnValue(res) {
     if (
       !(
         !!res &&
@@ -51,7 +51,7 @@ export const fetchResourceAPI = () =>
  */
 export const fetchCouponListAPI = () =>
   uni.request({
-    url: 'https://run.mocky.io/v3/2b5348e2-717c-465b-8e5a-c97e71b6d60f',
+    url: 'https://run.mocky.io/v3/db110a65-cb24-4d2e-883f-546cc573ea5b',
     method: 'GET',
   })
 

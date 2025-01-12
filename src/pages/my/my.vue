@@ -139,7 +139,7 @@ export default {
     },
     throttledScroll: throttle(function (event) {
       this.onScroll(event)
-    }, 500),
+    }, 50),
     updateActiveTab() {
       const itemEls = document.querySelectorAll('.item')
       if (!itemEls.length) return
@@ -217,7 +217,6 @@ export default {
 .content {
   padding: 10px;
 }
-
 .item {
   margin: 10px 0;
   background: #f9f9f9;
@@ -240,7 +239,7 @@ export default {
   justify-content: center;
   align-items: center;
   background-color: transparent;
-  padding-top: 40px; /* 添加顶部内边距，避免贴顶 */
+  padding-top: 20px; /* 添加顶部内边距，避免贴顶 */
 }
 .gif {
   width: 40px;

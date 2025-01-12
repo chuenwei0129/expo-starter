@@ -22,14 +22,15 @@
 </template>
 
 <script>
-import ScanCode from '@/components/scanCode/index.vue'
+// import ScanCode from '@/components/scanCode/index.vue'
 import { fetchHotWordAPI } from './api/mockAPI'
 // import { fetchHotWordAPI } from './api/inStoreService'
 import { action_report } from '@/utils/track'
 
 export default {
   name: 'SearchBar',
-  components: { ScanCode },
+  inject: ['userId'],
+  // components: { ScanCode },
   data() {
     return {
       hotKeywords: [], // 热词列表
@@ -52,7 +53,7 @@ export default {
         action_name: 'service_search_click',
         module_name: 'service',
         extend: {
-          user_id: this.$dsBridge.call('getUserId', 'getUserId'),
+          user_id: this.userId,
         },
       })
 
@@ -93,11 +94,11 @@ export default {
 .search-bar {
   width: 100%;
   border-radius: 18px;
-  border: 3rpx solid #fe2442;
+  border: 4rpx solid #fe2442;
 
   &__input {
     width: 100%;
-    height: 63rpx;
+    height: 62rpx;
     border-radius: 35rpx;
     background: white;
     display: flex;

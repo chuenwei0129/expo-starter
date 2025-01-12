@@ -7,18 +7,10 @@
       @scroll="onScroll"
     >
       <!-- 顶部内容 -->
-      <view
-        ref="header"
-        class="header"
-      >
-        顶部内容
-      </view>
+      <view ref="header" class="header"> 顶部内容 </view>
 
       <!-- Tab部分 -->
-      <view
-        ref="tabContainer"
-        :class="['tab-container', { 'sticky': isSticky }]"
-      >
+      <view ref="tabContainer" :class="['tab-container', { sticky: isSticky }]">
         <view
           v-for="(tab, index) in tabs"
           :key="index"
@@ -32,11 +24,7 @@
 
       <!-- 内容区域 -->
       <view class="content">
-        <view
-          v-for="(item, index) in list"
-          :key="index"
-          class="item"
-        >
+        <view v-for="(item, index) in list" :key="index" class="item">
           {{ item }}
         </view>
       </view>
@@ -46,7 +34,7 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       list: Array.from({ length: 30 }, (_, i) => `Item ${i + 1}`),
       tabs: ['Tab 1', 'Tab 2', 'Tab 3'],
@@ -54,15 +42,14 @@ export default {
       tabTop: 0, // Tab 距离顶部的实际位置
       isSticky: false, // 控制吸顶状态
       activeTab: 0, // 当前激活的 Tab
-      headerHeight: 0,
     }
   },
-  mounted () {
+  mounted() {
     this.calculateTabTop()
     this.calculateHeaderHeight()
   },
   methods: {
-    calculateTabTop () {
+    calculateTabTop() {
       const query = uni.createSelectorQuery().in(this)
       query
         .select('.tab-container')
@@ -73,7 +60,7 @@ export default {
         })
         .exec()
     },
-    calculateHeaderHeight () {
+    calculateHeaderHeight() {
       const query = uni.createSelectorQuery().in(this)
       query
         .select('.header')
@@ -84,7 +71,7 @@ export default {
         })
         .exec()
     },
-    onScroll (event) {
+    onScroll(event) {
       const { scrollTop } = event.detail
       this.scrollTop = scrollTop
 
@@ -95,10 +82,12 @@ export default {
       // 可以根据实际需求实现，例如根据每个内容块的位置计算
       // 这里简化处理，仅根据滚动位置大致判断
       const contentItemHeight = 40 // 假设每个 item 高度为 40
-      const currentTab = Math.floor((scrollTop - this.headerHeight) / (contentItemHeight * 10))
+      const currentTab = Math.floor(
+        (scrollTop - this.headerHeight) / (contentItemHeight * 10)
+      )
       this.activeTab = Math.max(0, Math.min(currentTab, this.tabs.length - 1))
     },
-    scrollToTab (index) {
+    scrollToTab(index) {
       this.activeTab = index
       // 计算滚动位置，这里需要根据每个 Tab 对应的内容块高度进行计算
       // 这里简化处理，仅滚动到 Tab 顶部

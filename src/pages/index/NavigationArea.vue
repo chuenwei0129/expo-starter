@@ -27,7 +27,7 @@
           }"
         >
           <view
-            v-for="(item) in row"
+            v-for="item in row"
             :key="item.title"
             class="navigation-area__swiper-item-content"
             :style="{ width: itemWidthPercentage + '%' }"
@@ -52,19 +52,16 @@
               />
             </view>
             <view class="navigation-area__swiper-item-name">
-              {{ item.title }}
+              {{ item.title.slice(0, 4) }}
             </view>
           </view>
         </view>
       </swiper-item>
     </swiper>
     <!-- 自定义指示器 -->
-    <view
-      v-if="showIndicatorDots"
-      class="navigation-area__custom-indicator"
-    >
+    <view v-if="showIndicatorDots" class="navigation-area__custom-indicator">
       <view
-        v-for="(page, index) in paginatedItems"
+        v-for="(_, index) in paginatedItems"
         :key="index"
         class="navigation-area__indicator-dot"
         :class="{
@@ -86,29 +83,30 @@ const MAX_ITEMS = 15 // 每页最大显示数量
 
 export default {
   name: 'NavigationArea',
+  inject: ['userId'],
   props: {
     list: {
       type: Array,
       default: () => [],
     },
   },
-  data () {
+  data() {
     return {
       swiperIndex: 0,
       paginatedItems: [],
     }
   },
   computed: {
-    itemWidthPercentage () {
+    itemWidthPercentage() {
       return 100 / ITEMS_PER_ROW
     },
-    showIndicatorDots () {
+    showIndicatorDots() {
       return this.paginatedItems.length > 1
     },
-    rowMarginBottom () {
+    rowMarginBottom() {
       return `${ROW_MARGIN_BOTTOM}rpx`
     },
-    swiperHeight () {
+    swiperHeight() {
       return this.getSwiperItemHeight(this.swiperIndex)
     },
   },
@@ -119,7 +117,7 @@ export default {
     },
   },
   methods: {
-    paginateItems () {
+    paginateItems() {
       this.paginatedItems = []
       for (
         let i = 0;
@@ -132,7 +130,7 @@ export default {
         this.paginatedItems.push(this.list.slice(start, end))
       }
     },
-    getRows (pageItems, pageIndex) {
+    getRows(pageItems, pageIndex) {
       const rows = []
       const isFirstPage = pageIndex === 0
       const perRow = isFirstPage ? pageItems.length : ITEMS_PER_ROW // 第一页特殊处理
@@ -143,19 +141,19 @@ export default {
 
       return rows
     },
-    handleSwiperChange (e) {
+    handleSwiperChange(e) {
       const newIndex = e.detail.current
       if (newIndex !== this.swiperIndex) {
         // 只在页码变化时才更新高度
         this.swiperIndex = newIndex
       }
     },
-    handleNavigationClick (item) {
+    handleNavigationClick(item) {
       action_report({
         action_name: 'service_recommend_diamond_click',
         module_name: 'service',
         extend: {
-          user_id: this.$dsBridge.call('getUserId', 'getUserId'),
+          user_id: this.userId,
           diamond_name: item.title,
         },
       })
@@ -174,7 +172,7 @@ export default {
       })
     },
     // 计算每个 swiper-item 的高度, 改为计算属性
-    getSwiperItemHeight (pageIndex) {
+    getSwiperItemHeight(pageIndex) {
       if (!this.paginatedItems[pageIndex]) return `${BASE_HEIGHT}rpx`
       const rows = this.getRows(
         this.paginatedItems[pageIndex],

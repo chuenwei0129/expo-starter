@@ -4,8 +4,8 @@
       <view class="even-goods-list">
         <template v-if="evenGoods && evenGoods.length > 0">
           <GoodsCard
-            v-for="goodsItem in evenGoods"
-            :key="goodsItem.id"
+            v-for="(goodsItem, index) in evenGoods"
+            :key="goodsItem.id + '-' + index + '-even'"
             class="goods-item"
             :goods="goodsItem"
             :image-style="imageStyle"
@@ -19,33 +19,23 @@
         <view
           v-else-if="
             showSkeleton &&
-              evenGoods.length == 0 &&
-              oddGoods.length == 0 &&
-              useSkeleton
+            evenGoods.length == 0 &&
+            oddGoods.length == 0 &&
+            useSkeleton
           "
-          class="skeleton-evengoods paddingRight test2"
+          class="skeleton-evengoods paddingRight"
         >
-          <view
-            v-for="i in 2"
-            :key="i"
-            class="skeleton-item"
-          >
-            <image
-              class="icon"
-              :src="skeletonIcon"
-            />
+          <view v-for="i in 2" :key="i" class="skeleton-item">
+            <image :src="skeletonIcon" />
           </view>
         </view>
       </view>
 
       <!-- 偶数 -->
-      <view
-        v-if="oddGoods && oddGoods.length > 0"
-        class="odd-goods-list"
-      >
+      <view v-if="oddGoods && oddGoods.length > 0" class="odd-goods-list">
         <GoodsCard
-          v-for="goodsItem in oddGoods"
-          :key="goodsItem.id"
+          v-for="(goodsItem, index) in oddGoods"
+          :key="goodsItem.id + '-' + index + '-odd'"
           class="goods-item"
           :goods="goodsItem"
           :image-style="imageStyle"
@@ -58,25 +48,25 @@
       <view
         v-else-if="
           showSkeleton &&
-            oddGoods.length == 0 &&
-            evenGoods.length == 0 &&
-            useSkeleton
+          oddGoods.length == 0 &&
+          evenGoods.length == 0 &&
+          useSkeleton
         "
         class="skeleton-evengoods paddingLeft"
       >
-        <view
-          v-for="i in 2"
-          :key="i"
-          class="skeleton-item"
-        >
-          <image
-            class="icon"
-            :src="skeletonIcon"
-          />
+        <view v-for="i in 2" :key="i" class="skeleton-item">
+          <image :src="skeletonIcon" />
         </view>
       </view>
     </view>
-    <slot name="bottom" />
+    <!-- 加载更多 slot -->
+    <slot name="load-more">
+      <!-- 你可以在这里放置加载更多的提示或按钮 -->
+    </slot>
+    <!-- 加载完毕 slot -->
+    <slot name="load-finished">
+      <!-- 你可以在这里放置加载完毕的提示 -->
+    </slot>
   </view>
 </template>
 
@@ -86,6 +76,7 @@ import { action_report } from '@/utils/track'
 
 export default {
   name: 'InStoreServiceGoodsList',
+  inject: ['userId'],
   components: {
     GoodsCard,
   },
@@ -117,23 +108,23 @@ export default {
       default: () => [],
     },
   },
-  data () {
+  data() {
     return {
       // 骨架屏icon
       skeletonIcon:
         'https://frontend-cdn.chongpangpang.com/image/medical-mp/home/skeleton_icon.png',
-      showSkeleton: true, // 骨架屏 开启/关闭
+      showSkeleton: false, // 骨架屏 开启/关闭
     }
   },
   computed: {
-    oddGoods () {
+    oddGoods() {
       if (this.adItems.length > 0) {
         return this.goods.filter((_, index) => index % 2 === 0)
       } else {
         return this.goods.filter((_, index) => index % 2 !== 0)
       }
     },
-    evenGoods () {
+    evenGoods() {
       if (this.adItems.length > 0) {
         return this.goods.filter((_, index) => index % 2 !== 0)
       } else {
@@ -141,41 +132,45 @@ export default {
       }
     },
   },
-  mounted () {
+  mounted() {
     uni.$on('skeleton-refresh', (bool) => {
-      setTimeout(() => {
-        this.showSkeleton = bool
-      }, 300)
+      this.showSkeleton = bool
     })
   },
   methods: {
-    handleClickGoods (goods) {
-      console.log('🚀 ~ handleClickGoods ~ goods:', this.$props.isRecommend)
+    handleClickGoods(goods) {
+      console.log('🚀 ~ handleClickGoods ~ this.userId:', this.userId)
 
       if (this.isRecommend) {
         action_report({
           action_name: 'service_recommend_feedscommodity_click',
           module_name: 'service',
           extend: {
-            user_id: this.$dsBridge.call('getUserId', 'getUserId'),
+            user_id: this.userId,
             commodity_name: goods.itemName,
-            commodity_id: goods.itemId
+            commodity_id: goods.itemId,
           },
         })
       } else {
         action_report({
-        action_name: 'service_category_feedscommodity_click',
-        module_name: 'service',
-        extend: {
-          user_id: this.$dsBridge.call('getUserId', 'getUserId'),
-          commodity_name: goods.itemName,
-          commodity_id: goods.itemId
-        },
-      })
+          action_name: 'service_category_feedscommodity_click',
+          module_name: 'service',
+          extend: {
+            user_id: this.userId,
+            commodity_name: goods.itemName,
+            commodity_id: goods.itemId,
+          },
+        })
       }
 
       this.$dsBridge.call('gotoPageThroughRoute', {
-        page: `${window.location.origin}/crm-medical-h5/#/pagesC/goodsServiceDetail/index?itemId=${goods.id}&skuId=${goods.skuId || ''}&shopId=${goods.shopId}&transparentTopBar=1`,
+        page: `${
+          window.location.origin
+        }/crm-medical-h5/#/pagesC/goodsServiceDetail/index?itemId=${
+          goods.id
+        }&skuId=${goods.skuId || ''}&shopId=${
+          goods.shopId
+        }&transparentTopBar=1`,
       })
     },
   },
@@ -210,6 +205,7 @@ export default {
   .skeleton-item {
     width: 352rpx; // calc((100vw - 46rpx) / 2);
     height: 552rpx;
+    // height: 700rpx;
     background: #ffffff;
     border-radius: 23rpx;
     display: flex;

@@ -1,9 +1,6 @@
 <template>
   <view class="component-area">
-    <u-row
-      class="component-area__list"
-      :gutter="10"
-    >
+    <u-row class="component-area__list" :gutter="10">
       <u-col
         v-for="(item, index) in list"
         :key="index"
@@ -13,7 +10,10 @@
         <view class="component-area__item">
           <image
             :src="item.image"
-            :style="{ height: calculateImageHeight(item) + 'rpx', width: itemWidth + 'rpx' }"
+            :style="{
+              height: calculateImageHeight(item) + 'rpx',
+              width: itemWidth + 'rpx',
+            }"
             class="component-area__image"
             mode="widthFix"
           />
@@ -28,6 +28,7 @@ import { action_report } from '@/utils/track'
 
 export default {
   name: 'ComponentArea',
+  inject: ['userId'],
   props: {
     list: {
       type: Array,
@@ -35,11 +36,11 @@ export default {
     },
   },
   computed: {
-    itemSpan () {
+    itemSpan() {
       return this.list.length > 0 ? 12 / this.list.length : 12
     },
     // 每个 item 的宽度，减去 gutter 的影响
-    itemWidth () {
+    itemWidth() {
       const totalWidth = 716 // 总宽度
       const gutter = 10 // 间距
       const columns = this.list.length
@@ -48,12 +49,12 @@ export default {
     },
   },
   methods: {
-    handleClick (link) {
+    handleClick(link) {
       action_report({
         action_name: 'service_recommend_components_click',
         module_name: 'service',
         extend: {
-          user_id:   this.$dsBridge.call('getUserId', 'getUserId'),
+          user_id: this.userId,
           recommend_name: link,
         },
       })
@@ -63,7 +64,7 @@ export default {
       })
     },
     // 根据图片的宽高比和当前宽度计算图片高度
-    calculateImageHeight (item) {
+    calculateImageHeight(item) {
       if (item.imageWidth && item.imageHeight) {
         const aspectRatio = item.imageHeight / item.imageWidth
         return this.itemWidth * aspectRatio

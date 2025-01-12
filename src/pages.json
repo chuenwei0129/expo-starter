@@ -30,12 +30,6 @@
         "navigationBarTitleText": "我的",
         "navigationStyle": "custom"
       }
-    },
-    {
-      "path": "pages/index/city/city",
-      "style": {
-        "navigationBarTitleText": "城市"
-      }
     }
   ],
   "globalStyle": {

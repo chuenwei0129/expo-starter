@@ -1,14 +1,8 @@
 <template>
   <view>
     <!-- 分类标签 -->
-    <view
-      v-if="list.length"
-      class="sticky-container"
-    >
-      <FilterTabs
-        :list="tabList"
-        @onSwitch="onSwitchTab"
-      />
+    <view v-if="categoryIds.length" class="sticky-container">
+      <FilterTabs :list="tabs" @onSwitch="onSwitchTab" />
       <FilterOptions
         :is-show-distance="isShowDistance"
         @filterChange="onFilterChange"
@@ -16,24 +10,30 @@
     </view>
     <view>
       <ProductList
-        v-if="products.length"
         :goods="formattedProducts"
         :is-recommend="params.categoryId === 0"
+        :imageStyle="{ backgroundColor: '#F7F8FC' }"
       >
-        <template #bottom>
-          <view
-            v-if="isFetched && isFinished"
-            class="last-container"
-          >
+        <template #load-more>
+          <view v-if="isLoadingMore" class="loading-container">
+            <image
+              src="https://frontend-cdn.chongpangpang.com/image/cpp-static/prod/ui/cpp_h5_loading.png"
+              mode="scaleToFill"
+              class="loading-image"
+            />
+          </view>
+        </template>
+        <template #load-finished>
+          <view v-if="isDataFetched && isFinished" class="last-container">
             已经到底啦喵～
           </view>
         </template>
       </ProductList>
-      <NoData
-        v-else-if="isFetched && !products.length"
-        style="height: 80vh"
+      <!-- <NoData
+        v-else-if="isDataFetched && !products.length && !isLoading"
+        style="height: 100%"
         img="https://frontend-cdn.chongpangpang.com/image/medical-mp/chat/empty-sheet-tag.png"
-      />
+      /> -->
     </view>
   </view>
 </template>
@@ -44,8 +44,8 @@ import FilterOptions from './FilterOptions.vue'
 import ProductList from './ProductList.vue'
 import NoData from './NoData.vue'
 
-// import { fetchRecommendClassifyAPI, fetchProductListAPI } from './api/mockAPI'
-import { fetchRecommendClassifyAPI, fetchProductListAPI } from './api/inStoreService'
+import { fetchRecommendClassifyAPI, fetchProductListAPI } from './api/mockAPI'
+// import { fetchRecommendClassifyAPI, fetchProductListAPI } from './api/inStoreService'
 
 export default {
   name: 'ProductFeeds',
@@ -63,20 +63,22 @@ export default {
     isShowDistance: {
       type: Boolean,
       default: false,
-    }
+    },
+    scrollTop: {
+      type: Number,
+      default: 0,
+    },
   },
-  data () {
+  data() {
     return {
-      list: [],
-      products: [], // 新增：商品列表数据
-      isFetched: false,
+      categoryIds: [],
+      products: [],
+      isDataFetched: false,
+      isLoadingMore: false, // 新增：加载中状态
       params: {
         pageNum: 1,
-        pageSize: 10,
-        // 类目 id
-        // 默认为推荐类目
+        pageSize: 5,
         categoryId: 0,
-        // 排序类型
         sortType: 1,
       },
       totalCount: 0,
@@ -84,7 +86,7 @@ export default {
     }
   },
   computed: {
-    formattedProducts () {
+    formattedProducts() {
       return this.products.map((e) => {
         const salePrice =
           e.promotionTag !== null ? e.promotionPrice : e.realPrice
@@ -105,68 +107,76 @@ export default {
         }
       })
     },
-    tabList () {
-      return [{ id: 0, name: '推荐' }, ...this.list]
+    tabs() {
+      return [{ id: 0, name: '推荐' }, ...this.categoryIds]
     },
   },
-  async mounted () {
+  async mounted() {
     await this.fetchRecommendClassifyData()
     await this.fetchProductListData()
   },
   methods: {
-    async fetchRecommendClassifyData () {
+    async fetchRecommendClassifyData() {
       const resp = await fetchRecommendClassifyAPI()
-      this.list = resp.data.data || []
+      this.categoryIds = resp.data.data || []
     },
-    async fetchProductListData () {
-      if (this.isFinished) {
-        return
+    async fetchProductListData(signal) {
+      if (this.isFinished) return
+      if (this.params.pageNum > 1 && signal) {
+        this.isLoadingMore = true // 开始加载
       }
+      this.isDataFetched = false
+      uni.$emit('skeleton-refresh', true)
       const { cityCode, lon, lat } = this.location
-      this.isFetched = false
-      const resp = await fetchProductListAPI({
-        pageNum: this.params.pageNum,
-        pageSize: 10,
-        cityCode,
-        lng: lon ? lon : undefined,
-        lat: lat ? lat : undefined,
-        // 传入类目 id
-        categoryIds: this.params.categoryId
-          ? [this.params.categoryId]
-          : undefined,
-        sortType: this.params.sortType,
-        fromChannel: 'APP',
-      })
-      this.isFetched = true
-      // uni.$emit('skeleton-refresh', false) // 关闭骨架屏
-      console.log('🚀 ~ fetchProductListData ~ resp:', resp)
-      this.totalCount = Number(resp.data.data.totalCount)
-      const products = resp.data.data.data || []
-      this.products = this.products.concat(products)
-      if (this.totalCount > this.products.length) {
-        // 还有数据，继续分页请求
-        this.params.pageNum++
-      } else {
-        this.isFinished = true
+      try {
+        const resp = await fetchProductListAPI({
+          pageNum: this.params.pageNum,
+          pageSize: this.params.pageSize,
+          cityCode,
+          lng: lon ? lon : undefined,
+          lat: lat ? lat : undefined,
+          categoryIds: this.params.categoryId
+            ? [this.params.categoryId]
+            : undefined,
+          sortType: this.params.sortType,
+          fromChannel: 'APP',
+        })
+        this.totalCount = Number(resp.data.data.totalCount)
+        const products = resp.data.data.data || []
+        this.products = this.products.concat(products)
+        if (this.totalCount > this.products.length) {
+          // 还有数据，继续分页请求
+          this.params.pageNum++
+        } else {
+          // 在数据加载完后渲染
+          this.$nextTick(() => {
+            this.isFinished = true
+          })
+        }
+      } catch (error) {
+        console.error('Failed to fetch product list:', error)
+      } finally {
+        uni.$emit('skeleton-refresh', false)
+        this.isDataFetched = true
+        this.isLoadingMore = false
       }
     },
-    onSwitchTab (tabIndex) {
-      console.log('🚀 ~ onSwitchTab ~ tabIndex:', tabIndex)
-      if (String(this.params.categoryId) === tabIndex.id) {
+    async onSwitchTab(tabIndex) {
+      if (String(this.params.categoryId) === String(tabIndex.id)) {
         return
       }
-
+      this.$emit('tabClick')
       this.params.categoryId = tabIndex.id
       this.reset()
-      this.fetchProductListData()
+      await this.fetchProductListData()
     },
-    onFilterChange (filterType) {
-      console.log('🚀 ~ onFilterChange ~ filterType:', filterType)
+    async onFilterChange(filterType) {
+      this.$emit('tabClick')
       this.params.sortType = filterType
       this.reset()
-      this.fetchProductListData() // 重新获取数据
+      await this.fetchProductListData()
     },
-    reset () {
+    reset() {
       this.params.pageNum = 1 // 重置页码
       this.isFinished = false
       this.products = []
@@ -193,5 +203,17 @@ export default {
   top: 0;
   z-index: 999;
   background-color: #fff;
+  height: 100px;
+  border: 1px solid black;
+}
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20rpx;
+}
+.loading-image {
+  width: 60rpx;
+  height: 60rpx;
 }
 </style>

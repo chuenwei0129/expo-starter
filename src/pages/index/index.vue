@@ -88,18 +88,23 @@
       img="https://frontend-cdn.chongpangpang.com/image/medical-mp/chat/empty-sheet-tag.png"
     >
       <template #button>
-        <button class="slot-button" @click="goToLocationPermissionSet">
+        <view class="slot-button" @click="goToLocationPermissionSet">
           立即开启
-        </button>
+        </view>
       </template>
     </NoData>
 
     <!-- 内容区 -->
     <view
+      :style="{ height: `calc(100vh - ${navHeight})` }"
       v-else-if="
         permission === LocationPermissionStatus.GRANTED || isShowCityInNavBar
       "
     >
+      <view v-if="isRefreshing" class="refresh-animation">
+        <image src="/static/refresh.gif" mode="aspectFit" class="gif" />
+        <text class="refresh-text">胖胖努力中...</text>
+      </view>
       <scroll-view
         v-if="shopByCityList.fetched && shopByCityList.data.length"
         scroll-y
@@ -107,9 +112,10 @@
         class="in-store-service__scroll-view"
         :style="{ height: `calc(100vh - ${navHeight})` }"
         refresher-enabled
-        :refresher-triggered="isTriggered"
+        :refresher-triggered="isRefreshing"
         @scroll="onScroll"
         @scrolltolower="handleScrollToLower"
+        @refresherrestore="onRestore"
         @refresherrefresh="handleRefresherrefresh"
       >
         <view style="background-color: #fff">
@@ -128,6 +134,8 @@
         />
         <!-- Feeds 组件 -->
         <ProductFeeds
+          class="product-feeds"
+          @tabClick="handleTabClick"
           ref="productFeedsRef"
           :is-show-distance="permission === LocationPermissionStatus.GRANTED"
           :location="isShowCityInNavBar ? cityInfo : locationInfo"
@@ -136,14 +144,14 @@
 
       <NoData
         v-else-if="shopByCityList.fetched && shopByCityList.data.length === 0"
-        :style="{ height: `calc(100vh - ${navHeight})` }"
+        style="height: 100%"
         no-data-text="当前城市未开启服务"
         img="https://frontend-cdn.chongpangpang.com/image/medical-mp/chat/empty-sheet-tag.png"
       >
         <template #button>
-          <button class="slot-button" @click="handleShowPopup">
+          <view class="slot-button" @click="handleShowPopup">
             选择其他城市
-          </button>
+          </view>
         </template>
       </NoData>
 
@@ -208,21 +216,6 @@ import NoData from './NoData.vue'
 import { isEqual } from 'lodash-es'
 
 // 引入 API 接口
-// import {
-//   fetchResourceAPI,
-//   fetchCouponListAPI,
-//   fetchComponentListAPI,
-//   fetchNavigationAPI,
-//   fetchShopByCityAPI,
-//   fetchHasShopCityListAPI,
-// } from './api/mockAPI'
-
-// 引入 MOCK APP 接口
-// #ifdef MP-WEIXIN
-import mockAPP from './api/mockAPP'
-// #endif
-
-// 引入 API 接口
 import {
   fetchResourceAPI,
   fetchCouponListAPI,
@@ -230,13 +223,28 @@ import {
   fetchNavigationAPI,
   fetchShopByCityAPI,
   fetchHasShopCityListAPI,
-} from './api/inStoreService'
+} from './api/mockAPI'
+
+// 引入 API 接口
+// import {
+//   fetchResourceAPI,
+//   fetchCouponListAPI,
+//   fetchComponentListAPI,
+//   fetchNavigationAPI,
+//   fetchShopByCityAPI,
+//   fetchHasShopCityListAPI,
+// } from './api/inStoreService'
 
 import { LocationPermissionStatus } from './constants/LocationPermission'
 import { action_report } from '@/utils/track'
 
 export default {
   name: 'InStoreService',
+  provide() {
+    return {
+      userId: this.userId,
+    }
+  },
   components: {
     BackToTop,
     ResourceList,
@@ -252,6 +260,7 @@ export default {
 
   data() {
     return {
+      userId: '',
       // 是否在线
       // isOffline: false,
       // 导航栏高度
@@ -306,7 +315,8 @@ export default {
         lon: '',
         lat: '',
       },
-      isTriggered: false,
+      isRefreshing: false,
+      tabToTop: 0,
     }
   },
 
@@ -330,15 +340,14 @@ export default {
   },
   onLoad(options) {
     console.log('🚀 ~ onLoad ~ onLoad:', '到店服务 onLoad 触发了')
+
+    this.userId = this.$dsBridge.call('getUserId', 'getUserId')
+    console.log('🚀 ~ onLoad ~ this.userId:', this.userId)
+
     // // 获取网络状态
     // this.checkNetworkStatus()
     // // 如果网络状态是离线，直接返回
     // if (this.isOffline) return
-
-    // 开发环境 MOCK APP 接口
-    // #ifdef MP-WEIXIN
-    this.$dsBridge = mockAPP
-    // #endif
 
     // MOCK 选择城市传递的数据
     // const params = JSON.stringify({
@@ -374,8 +383,8 @@ export default {
         this.isShowCityInNavBar = true
 
         // 处理当用户未定位直接切选择城市页面然后直接返回的情况
-        if (!info.cityName) {
-          info.cityName = '定位失败，可手动切换地址'
+        if (permission.granted === LocationPermissionStatus.DENIED) {
+          this.permission = permission.granted
         }
 
         this.cityInfo = { ...this.cityInfo, ...info }
@@ -403,6 +412,28 @@ export default {
   },
 
   methods: {
+    calculateTabTop() {
+      const query = uni.createSelectorQuery().in(this)
+      query
+        .select('.product-feeds')
+        .boundingClientRect((res) => {
+          if (res) {
+            this.tabToTop = res.top // 动态更新Tab的距离
+            console.log(
+              '🚀 ~ .boundingClientRect ~ this.tabToTop:',
+              this.tabToTop
+            )
+          }
+        })
+        .exec()
+    },
+    handleTabClick() {
+      // 吸顶以后再点击就不需要滚动了
+      this.scrollTop = this.oldScrollTop
+      this.$nextTick(() => {
+        this.scrollTop = this.tabToTop
+      })
+    },
     // 存储数据到本地存储
     storeLocationInfo(info) {
       // 存储数据
@@ -426,7 +457,7 @@ export default {
         action_name: 'service_choice_city_button_click',
         module_name: 'service',
         extend: {
-          user_id: this.$dsBridge.call('getUserId', 'getUserId'),
+          user_id: this.userId,
           button_name: city.cityName,
         },
       })
@@ -579,6 +610,8 @@ export default {
         this.fetchComponentListData(),
         this.fetchResourceData(info),
       ])
+      // 计算 tab 栏的 top 值
+      this.calculateTabTop()
     },
     // 获取资源区数据
     async fetchResourceData(info) {
@@ -594,9 +627,8 @@ export default {
     // 获取优惠券数据
     async fetchCouponListData() {
       // 获取用户 ID，如果没有则使用默认测试 ID
-      const userId = this.$dsBridge.call('getUserId', 'getUserId')
       const resp = await fetchCouponListAPI({
-        userId,
+        userId: this.userId,
         status: 5,
       })
       this.couponList = resp.data.data || []
@@ -630,7 +662,7 @@ export default {
         action_name: 'service_switchaddress_click',
         module_name: 'service',
         extend: {
-          user_id: this.$dsBridge.call('getUserId', 'getUserId'),
+          user_id: this.userId,
         },
       })
 
@@ -668,13 +700,19 @@ export default {
     // 滚动相关
     // 下拉刷新，滚动加载
     async handleRefresherrefresh() {
-      this.isTriggered = true
+      this.isRefreshing = true
       const info = this.isShowCityInNavBar ? this.cityInfo : this.locationInfo
       this.fetchShopByCityData(info)
-      this.isTriggered = false
+      this.isRefreshing = false
     },
+
+    onRestore() {
+      this.isRefreshing = false
+    },
+
     handleScrollToLower() {
-      this.$refs.productFeedsRef.fetchProductListData()
+      // const loadingMoreSignal = true
+      this.$refs.productFeedsRef.fetchProductListData(true)
     },
     // 搜索框隐藏与显示
     onScroll(event) {
@@ -765,7 +803,7 @@ export default {
   display: flex;
 
   .cur-location {
-    margin-left: 50rpx;
+    margin-left: 40rpx;
     margin-right: 10rpx;
     display: inline-flex;
     align-items: center;
@@ -890,6 +928,41 @@ export default {
       background: #fee900;
       border-radius: 40rpx;
     }
+  }
+  /* 下拉刷新动画 */
+  .refresh-animation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    padding-top: 20px; /* 添加顶部内边距，避免贴顶 */
+  }
+  .gif {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+  }
+  .refresh-text {
+    text-align: center;
+    color: #666;
+  }
+
+  /* 上拉加载动画 */
+  .loading-animation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  .loading-gif {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+  }
+  .loading-text {
+    text-align: center;
   }
 }
 </style>
